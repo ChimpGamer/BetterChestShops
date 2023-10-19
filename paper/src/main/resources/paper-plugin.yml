@@ -1,0 +1,22 @@
+name: BetterChestShops
+main: nl.chimpgamer.betterchestshops.paper.Bootstrap
+version: ${version}
+api-version: '1.19'
+authors:
+  - ChimpGamer
+
+loader: nl.chimpgamer.betterchestshops.paper.BetterChestShopsLoader
+
+dependencies:
+  - name: ChestShop
+    required: false
+    bootstrap: false
+  - name: HolographicDisplays
+    required: false
+    bootstrap: false
+  - name: CMI
+    required: false
+    bootstrap: false
+  - name: DecentHolograms
+    required: false
+    bootstrap: false
