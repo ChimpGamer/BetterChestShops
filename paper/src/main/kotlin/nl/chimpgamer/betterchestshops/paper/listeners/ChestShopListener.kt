@@ -70,7 +70,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
                 ContainerType.valueOf(container.type.toString().uppercase())
             } catch (ex: IllegalArgumentException) {
                 player.sendRichMessage(
-                    "<red>Onbekend type container. Gebruik een van de volgende container type: " + ContainerType.entries
+                    "<red>Unknown container type. Use one of the following container types: " + ContainerType.entries
                         .joinToString()
                 )
                 return
