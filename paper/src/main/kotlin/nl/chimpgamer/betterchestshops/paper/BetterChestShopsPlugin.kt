@@ -64,8 +64,13 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         cloudCommandManager.initialize()
         cloudCommandManager.loadCommands()
 
-        server.pluginManager.registerSuspendingEvents(ChestShopListener(this), this.bootstrap)
-        server.pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap)
+        val pluginManager = server.pluginManager
+        pluginManager.registerSuspendingEvents(ChestShopListener(this), this.bootstrap)
+
+
+        if (pluginManager.isPluginEnabled("BentoBox")) {
+            pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap)
+        }
 
         launch {
             while (true) {
