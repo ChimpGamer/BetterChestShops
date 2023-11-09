@@ -86,8 +86,6 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
                 sellPrice = PriceUtil.getExactSellPrice(prices)
             }
 
-            println("itemStack=$itemStack")
-
             val chestShop = plugin.chestShopsHandler.addChestShop(
                 uuid,
                 containerType,
