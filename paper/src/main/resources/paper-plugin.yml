@@ -20,3 +20,6 @@ dependencies:
   - name: DecentHolograms
     required: false
     bootstrap: false
+  - name: PlaceholderAPI
+    required: false
+    bootstrap: false

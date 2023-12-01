@@ -12,6 +12,7 @@ import nl.chimpgamer.betterchestshops.paper.configurations.MessagesConfig
 import nl.chimpgamer.betterchestshops.paper.configurations.SettingsConfig
 import nl.chimpgamer.betterchestshops.paper.handlers.ChestShopsHandler
 import nl.chimpgamer.betterchestshops.paper.handlers.DatabaseHandler
+import nl.chimpgamer.betterchestshops.paper.hooks.HookManager
 import nl.chimpgamer.betterchestshops.paper.listeners.BentoBoxListener
 import nl.chimpgamer.betterchestshops.paper.listeners.ChestShopListener
 import nl.chimpgamer.betterchestshops.paper.managers.HologramManager
@@ -41,6 +42,8 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
     val chestShopIconTask = ChestShopIconTask(this)
 
+    private val hookManager = HookManager(this)
+
     fun load() {
         instance = this
         // Make sure that the BetterChestShops folder exists.
@@ -64,6 +67,8 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         cloudCommandManager.initialize()
         cloudCommandManager.loadCommands()
 
+        hookManager.load()
+
         val pluginManager = server.pluginManager
         pluginManager.registerSuspendingEvents(ChestShopListener(this), this.bootstrap)
 
@@ -81,6 +86,7 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
     }
 
     fun disable() {
+        hookManager.unload()
         HandlerList.unregisterAll(bootstrap)
         server.scheduler.cancelTasks(this.bootstrap)
         if (databaseHandler.isDatabaseInitialized) {
@@ -146,7 +152,7 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         return false
     }
 
-    private fun getChestShopLimit(player: Player): Int {
+    fun getChestShopLimit(player: Player): Int {
         if (player.hasPermission("betterchestshops.shoplimit.*")) {
             return -1
         }
