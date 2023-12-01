@@ -43,6 +43,11 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
         .provider(this)
         .build(plugin.bootstrap)
 
+    val loreHeader = "<white>Lore:".parse()
+    val enchantsHeader = "<white>Enchant(s):".parse()
+    val none = listOf("<gray>(None)".parse())
+    val clickToTeleport = listOf(Component.empty(), "<light_purple>Click to teleport".parse())
+
     override fun init(player: Player, contents: InventoryContents) {
         var chestShops = plugin.chestShopsHandler.getChestShops().reversed()
 
@@ -58,11 +63,6 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
         }
 
         val hasTeleportPermission = player.hasPermission("betterchestshops.teleport")
-
-        val loreHeader = "<white>Lore:".parse()
-        val enchantsHeader = "<white>Enchant(s):".parse()
-        val none = listOf("<gray>(None)".parse())
-        val clickToTeleport = listOf(Component.empty(), "<light_purple>Click to teleport".parse())
 
         chestShops.forEach { chestShop ->
             with(chestShop) {
@@ -89,15 +89,14 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
                         "   <yellow>- ${ecData[0]} <gold>[${ecData[1]}]".parse()
                     }
                 } else {
-                    listOf("<gray>(None)".parse())
+                    none
                 }
 
                 val mutableLore = mutableListOf(
                     loreLine1.parse(),
                     "<white>Item Type: <yellow>${friendlyItemTypeName} <gray>(x$amount)".parse(),
                     loreHeader
-                )
-                mutableLore.apply {
+                ).apply {
                     addAll(chestShopItemLore)
                     add(enchantsHeader)
                     addAll(chestShopItemEnchantsComponent)
@@ -130,6 +129,7 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
                 })
             }
         }
+
 
         pagination.itemsPerPage = 45
         pagination.iterator(SlotIterator.builder().startPosition(0).type(SlotIterator.SlotIteratorType.HORIZONTAL).build())
