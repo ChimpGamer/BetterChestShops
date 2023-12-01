@@ -38,6 +38,11 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
         .provider(this)
         .build(plugin.bootstrap)
 
+    val loreHeader = "<white>Lore:".parse()
+    val enchantsHeader = "<white>Enchant(s):".parse()
+    val none = listOf("<gray>(None)".parse())
+    val clickToTeleport = listOf(Component.empty(), "<light_purple>Click to teleport".parse())
+
     override fun init(player: Player, contents: InventoryContents) {
         var chestShops = plugin.chestShopsHandler.getAllByCreator(player.uniqueId).reversed()
 
@@ -51,13 +56,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
             }
         }
 
-
         val hasTeleportPermission = player.hasPermission("betterchestshops.teleport")
-
-        val loreHeader = "<white>Lore:".parse()
-        val enchantsHeader = "<white>Enchant(s):".parse()
-        val none = listOf("<gray>(None)".parse())
-        val clickToTeleport = listOf(Component.empty(), "<light_purple>Click to teleport".parse())
 
         chestShops.forEach { chestShop ->
             with(chestShop) {
@@ -91,8 +90,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
                     loreLine1.parse(),
                     "<white>Item Type: <yellow>${friendlyItemTypeName} <gray>(x$amount)".parse(),
                     loreHeader
-                )
-                mutableLore.apply {
+                ).apply {
                     addAll(chestShopItemLore)
                     add(enchantsHeader)
                     addAll(chestShopItemEnchantsComponent)
