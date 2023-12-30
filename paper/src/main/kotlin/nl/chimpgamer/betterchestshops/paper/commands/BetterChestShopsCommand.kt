@@ -2,6 +2,7 @@ package nl.chimpgamer.betterchestshops.paper.commands
 
 import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.IntegerArgument
+import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import com.Acrobot.ChestShop.Signs.ChestShopSign
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
@@ -41,21 +42,19 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
 
         commandManager.command(builder
             .literal("clearinvalid")
-            .handler { context ->
+            .suspendingHandler { context ->
                 val sender = context.sender
 
-                plugin.launch {
-                    val toRemove = HashSet<ChestShop>()
-                    plugin.chestShopsHandler.getChestShops().forEach { chestShop ->
-                        if (!ChestShopSign.isValid(chestShop.signLocation.block)) {
-                            chestShop.destroyItem()
-                            toRemove.add(chestShop)
-                        }
+                val toRemove = HashSet<ChestShop>()
+                plugin.chestShopsHandler.getChestShopsUnordered().forEach { chestShop ->
+                    if (!ChestShopSign.isValid(chestShop.signLocation.block)) {
+                        chestShop.destroyItem()
+                        toRemove.add(chestShop)
                     }
-
-                    val count = plugin.chestShopsHandler.removeChestShops(toRemove)
-                    sender.sendRichMessage("<gold>You have deleted <yellow>${count.get()} <gold>invalid chestshops!")
                 }
+
+                val count = plugin.chestShopsHandler.removeChestShops(toRemove)
+                sender.sendRichMessage("<gold>You have deleted <yellow>${count.get()} <gold>invalid chestshops!")
             }
         )
     }

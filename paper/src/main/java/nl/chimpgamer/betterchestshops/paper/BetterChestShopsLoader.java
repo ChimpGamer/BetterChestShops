@@ -25,6 +25,7 @@ public class BetterChestShopsLoader implements PluginLoader {
             add("org.mariadb.jdbc:mariadb-java-client:3.3.1");
             add("cloud.commandframework:cloud-paper:1.8.4");
             add("cloud.commandframework:cloud-minecraft-extras:1.8.4");
+             add("cloud.commandframework:cloud-kotlin-coroutines:1.8.4");
             add("dev.dejvokep:boosted-yaml:1.3.1");
         }};
 
