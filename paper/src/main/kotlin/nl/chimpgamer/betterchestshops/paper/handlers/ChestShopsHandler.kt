@@ -109,4 +109,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
     }
 
     fun getChestShops() = chestShops.values.toList()
+
+    fun getChestShopsUnordered() = chestShops.values.toSet()
+
+    fun getChestShops(predicate: (ChestShop) -> Boolean) = chestShops.values.filter(predicate)
 }

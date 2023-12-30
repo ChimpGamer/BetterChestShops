@@ -10,7 +10,7 @@ class BentoBoxListener(private val plugin: BetterChestShopsPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     suspend fun onIslandDelete(event: IslandPreclearEvent) {
-        val toRemove = plugin.chestShopsHandler.getChestShops().filter { event.oldIsland.inIslandSpace(it.signLocation) }.toSet()
+        val toRemove = plugin.chestShopsHandler.getChestShops { event.oldIsland.inIslandSpace(it.signLocation) }.toSet()
 
         val amount = plugin.chestShopsHandler.removeChestShops(toRemove)
         plugin.logger.info("Removed ${amount.get()} chestshops from island ${event.oldIsland.name}")
