@@ -5,6 +5,7 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import nl.chimpgamer.betterchestshops.paper.commands.CloudCommandManager
@@ -77,7 +78,7 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
             pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap)
         }
 
-        launch {
+        launch(Dispatchers.IO) {
             while (true) {
                 chestShopIconTask.run()
                 delay(settingsConfig.hologramRefreshInterval.seconds)
@@ -123,6 +124,14 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
             runnable.run()
         } else {
             server.scheduler.runTask(bootstrap, runnable)
+        }
+    }
+
+    fun runAsync(runnable: Runnable) {
+        if (!server.isPrimaryThread) {
+            runnable.run()
+        } else {
+            server.scheduler.runTaskAsynchronously(bootstrap, runnable)
         }
     }
 
