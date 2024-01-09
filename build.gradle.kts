@@ -28,6 +28,8 @@ subprojects {
         maven("https://jitpack.io") // DecentHolograms Repository
 
         maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
+
+        maven("https://repo.fancyplugins.de/releases") // FancyHolograms Repository
     }
 
     dependencies {
@@ -58,6 +60,7 @@ subprojects {
         compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
         compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.4")
         compileOnly("world.bentobox:bentobox:1.24.1-SNAPSHOT")
+        compileOnly("de.oliver:FancyHolograms:2.0.4")
 
         compileOnly(fileTree("../libs"))
     }

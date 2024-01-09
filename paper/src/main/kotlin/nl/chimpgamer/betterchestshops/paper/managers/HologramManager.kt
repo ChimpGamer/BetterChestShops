@@ -26,6 +26,7 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
                 isPluginEnabled("DecentHolograms") -> hologramHandler = DecentHologramsHologramHandler(plugin)
                 isPluginEnabled("CMI") -> hologramHandler = CMIHologramHandler(plugin)
                 isPluginEnabled("HolographicDisplays") -> hologramHandler = HolographicDisplaysHologramHandler(plugin)
+                isPluginEnabled("FancyHolograms") -> hologramHandler = FancyHologramsHologramHandler(plugin)
             }
         } else {
             when {
@@ -35,8 +36,11 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
                 hologramHandlerSetting.equals("CMI", ignoreCase = true) && isPluginEnabled("CMI") -> {
                     hologramHandler = CMIHologramHandler(plugin)
                 }
-                hologramHandlerSetting.equals("HolographicDisplays", ignoreCase = true) && isPluginEnabled("CMI") -> {
+                hologramHandlerSetting.equals("HolographicDisplays", ignoreCase = true) && isPluginEnabled("HolographicDisplays") -> {
                     hologramHandler = HolographicDisplaysHologramHandler(plugin)
+                }
+                hologramHandlerSetting.equals("FancyHolograms", ignoreCase = true) && isPluginEnabled("FancyHolograms") -> {
+                    hologramHandler = FancyHologramsHologramHandler(plugin)
                 }
             }
         }
