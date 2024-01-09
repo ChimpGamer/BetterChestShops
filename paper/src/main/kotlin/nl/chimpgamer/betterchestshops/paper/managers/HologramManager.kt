@@ -6,6 +6,13 @@ import nl.chimpgamer.betterchestshops.paper.holograms.*
 class HologramManager(private val plugin: BetterChestShopsPlugin) {
     var hologramHandler: HologramHandler = EmptyHologramHandler()
 
+    /**
+     * DecentHolograms is thread-safe
+     * CMI is not thread-safe
+     * HolographicDisplays is untested for thread-safety
+     * FancyHolograms is not thread-safe
+     */
+
     fun initialize() {
         determineHologramHandler()
 

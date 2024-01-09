@@ -1,8 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.tasks
 
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
-import nl.chimpgamer.betterchestshops.paper.models.ChestShop
-import org.bukkit.Bukkit
 
 class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) : Runnable {
 
@@ -14,18 +12,10 @@ class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) : Runnable {
             // Check if chunk is loaded before continuing.
             if (!signLocation.isChunkLoaded) return@forEach
             count++
-            checkAndSpawnItem(chestShop)
+            plugin.runSync { chestShop.spawnItem() }
         }
 
         val end = System.currentTimeMillis() - time
         plugin.debug("ChestShopIconTask took ${end}ms to run through $count chestshops.")
-    }
-
-    private fun checkAndSpawnItem(chestShop: ChestShop) {
-        if (!Bukkit.isPrimaryThread()) {
-            plugin.runSync { checkAndSpawnItem(chestShop) }
-            return
-        }
-        chestShop.spawnItem()
     }
 }
