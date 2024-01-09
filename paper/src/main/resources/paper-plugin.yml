@@ -23,3 +23,6 @@ dependencies:
   - name: PlaceholderAPI
     required: false
     bootstrap: false
+  - name: FancyHolograms
+    required: false
+    bootstrap: false
