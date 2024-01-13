@@ -1,7 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
@@ -10,6 +9,7 @@ import nl.chimpgamer.betterchestshops.paper.storage.entities.toChestShop
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -45,41 +45,49 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         buyPrice: BigDecimal? = null,
         sellPrice: BigDecimal? = null
     ) : ChestShop {
+        val itemStackAsBytes = itemStack?.serializeAsBytes()
+
         val existingChestShop = getByLocation(signLocation)
         if (existingChestShop != null) {
             // Okay so it is being updated?
-            val updatedChestShop = withContext(Dispatchers.IO) {
-                transaction {
-                    ChestShopEntity[existingChestShop.id].apply {
-                        this.creatorUUID = creator
-                        this.amount = amount
-                        this.itemStack = if (itemStack == null) null else ExposedBlob(itemStack.serializeAsBytes())
-                        this.buyPrice = buyPrice
-                        this.sellPrice = sellPrice
-                    }
+            val updatedChestShop = newSuspendedTransaction(Dispatchers.IO) {
+                ChestShopEntity[existingChestShop.id].apply {
+                    this.creatorUUID = creator
+                    this.amount = amount
+                    this.itemStack = if (itemStackAsBytes == null) null else ExposedBlob(itemStackAsBytes)
+                    this.buyPrice = buyPrice
+                    this.sellPrice = sellPrice
                 }
             }
             return chestShops.replace(signLocation, updatedChestShop.toChestShop())!!
         } else {
-            val newChestShop = withContext(Dispatchers.IO) {
-                transaction {
-                    ChestShopEntity.new {
-                        this.creatorUUID = creator
-                        this.containerType = containerType
-                        this.amount = amount
-                        this.world = signLocation.world.name
-                        this.x = signLocation.blockX
-                        this.y = signLocation.blockY
-                        this.z = signLocation.blockZ
-                        this.itemStack = if (itemStack == null) null else ExposedBlob(itemStack.serializeAsBytes())
-                        this.buyPrice = buyPrice
-                        this.sellPrice = sellPrice
-                        this.created = LocalDateTime.now()
-                    }
+            val newChestShop = newSuspendedTransaction(Dispatchers.IO) {
+                ChestShopEntity.new {
+                    this.creatorUUID = creator
+                    this.containerType = containerType
+                    this.amount = amount
+                    this.world = signLocation.world.name
+                    this.x = signLocation.blockX
+                    this.y = signLocation.blockY
+                    this.z = signLocation.blockZ
+                    this.itemStack = if (itemStackAsBytes == null) null else ExposedBlob(itemStackAsBytes)
+                    this.buyPrice = buyPrice
+                    this.sellPrice = sellPrice
+                    this.created = LocalDateTime.now()
                 }
             }
             //println("newChestShop=$newChestShop")
-            println("itemStack=${newChestShop.itemStack?.bytes}")
+            //println("itemStack=${newChestShop.itemStack}")
+            //println("itemStack.bytes=${newChestShop.itemStack?.bytes}")
+            //val isnull = newChestShop.itemStack == null
+            val size = newChestShop.itemStack?.bytes?.size
+            //println(isnull)
+            //println(size)
+            //println(newChestShop.itemStack?.bytes?.size)
+
+            // For some reason size is 0 but the next time
+            // bytes is called it is loaded? Hacky fix for error.
+            if (size == 0) {}
             val chestShop = newChestShop.toChestShop()
             chestShops[signLocation] = chestShop
             return chestShop
@@ -88,22 +96,18 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
 
     suspend fun removeChestShop(chestShop: ChestShop) {
         chestShop.destroyItem()
-
         val id = chestShop.id
-        withContext(Dispatchers.IO) {
-            transaction {
-                ChestShopEntity[id].delete()
-            }
+
+        newSuspendedTransaction(Dispatchers.IO) {
+            ChestShopEntity[id].delete()
         }
         chestShops.remove(chestShop.signLocation)
     }
 
     suspend fun removeChestShops(chestShops: Collection<ChestShop>): AtomicInteger {
         val count = AtomicInteger()
-        withContext(Dispatchers.IO) {
-            transaction {
+        newSuspendedTransaction(Dispatchers.IO) {
                 chestShops.forEach { ChestShopEntity[it.id].delete(); if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet() }
-            }
         }
         return count
     }
