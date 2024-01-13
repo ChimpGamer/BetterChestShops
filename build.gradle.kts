@@ -40,16 +40,16 @@ subprojects {
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
         compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
         implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
-        compileOnly("org.jetbrains.exposed:exposed-core:0.45.0") {
+        compileOnly("org.jetbrains.exposed:exposed-core:0.46.0") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-dao:0.45.0") {
+        compileOnly("org.jetbrains.exposed:exposed-dao:0.46.0") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-jdbc:0.45.0") {
+        compileOnly("org.jetbrains.exposed:exposed-jdbc:0.46.0") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-java-time:0.45.0") {
+        compileOnly("org.jetbrains.exposed:exposed-java-time:0.46.0") {
             exclude("org.jetbrains.kotlin")
         }
         compileOnly("org.xerial:sqlite-jdbc:3.44.1.0")
