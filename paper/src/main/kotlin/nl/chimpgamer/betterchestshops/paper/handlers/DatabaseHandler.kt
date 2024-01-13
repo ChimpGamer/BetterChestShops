@@ -3,6 +3,7 @@ package nl.chimpgamer.betterchestshops.paper.handlers
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -19,7 +20,10 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         val storageType = settings.storageType.lowercase()
 
         if (storageType == "sqlite") {
-            database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}")
+            database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
+                defaultMinRepetitionDelay = 100L
+                defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+            })
         } else if (storageType == "mysql" || storageType == "mariadb") {
             val host = settings.storageHost
             val port = settings.storagePort
@@ -36,10 +40,12 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
             database = Database.connect(
                 url,
                 user = username,
-                password = password
+                password = password,
+                databaseConfig = DatabaseConfig {
+                    defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+                }
             )
         }
-        if (isDatabaseInitialized) TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     }
 
     fun initialize() {
