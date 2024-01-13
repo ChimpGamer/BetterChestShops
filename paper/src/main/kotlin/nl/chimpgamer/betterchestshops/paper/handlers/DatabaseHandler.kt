@@ -1,5 +1,7 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.jetbrains.exposed.sql.Database
@@ -8,11 +10,14 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
+import java.util.concurrent.Executors
 
 class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
     private lateinit var database: Database
 
     val isDatabaseInitialized: Boolean get() = this::database.isInitialized
+
+    var databaseDispatcher = Dispatchers.IO
 
     private fun connect() {
         val databaseFile = plugin.dataFolder.resolve("data.db")
@@ -20,6 +25,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         val storageType = settings.storageType.lowercase()
 
         if (storageType == "sqlite") {
+            databaseDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
             database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
                 defaultMinRepetitionDelay = 100L
                 defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE

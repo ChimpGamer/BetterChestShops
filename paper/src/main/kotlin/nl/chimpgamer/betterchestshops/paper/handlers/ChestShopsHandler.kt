@@ -1,6 +1,5 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
-import kotlinx.coroutines.Dispatchers
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
@@ -19,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
     private val chestShops: MutableMap<Location, ChestShop> = ConcurrentHashMap()
+
+    private val databaseDispatcher get() = plugin.databaseHandler.databaseDispatcher
 
     fun load() {
         val loadedChestShops = HashMap<Location, ChestShop>()
@@ -50,7 +51,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         val existingChestShop = getByLocation(signLocation)
         if (existingChestShop != null) {
             // Okay so it is being updated?
-            val updatedChestShop = newSuspendedTransaction(Dispatchers.IO) {
+            val updatedChestShop = newSuspendedTransaction(databaseDispatcher) {
                 ChestShopEntity[existingChestShop.id].apply {
                     this.creatorUUID = creator
                     this.amount = amount
@@ -61,7 +62,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
             }
             return chestShops.replace(signLocation, updatedChestShop.toChestShop())!!
         } else {
-            val newChestShop = newSuspendedTransaction(Dispatchers.IO) {
+            val newChestShop = newSuspendedTransaction(databaseDispatcher) {
                 ChestShopEntity.new {
                     this.creatorUUID = creator
                     this.containerType = containerType
@@ -98,7 +99,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         chestShop.destroyItem()
         val id = chestShop.id
 
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             ChestShopEntity[id].delete()
         }
         chestShops.remove(chestShop.signLocation)
@@ -106,7 +107,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
 
     suspend fun removeChestShops(chestShops: Collection<ChestShop>): AtomicInteger {
         val count = AtomicInteger()
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
                 chestShops.forEach { ChestShopEntity[it.id].delete(); if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet() }
         }
         return count
