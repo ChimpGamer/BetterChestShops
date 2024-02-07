@@ -42,13 +42,14 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
 
         commandManager.command(builder
             .literal("clearinvalid")
+            .permission("$basePermission.clearinvalid")
             .suspendingHandler { context ->
                 val sender = context.sender
 
                 val toRemove = HashSet<ChestShop>()
                 plugin.chestShopsHandler.getChestShopsUnordered().forEach { chestShop ->
+                    if (!chestShop.isChunkLoaded) return@forEach
                     if (!ChestShopSign.isValid(chestShop.signLocation.block)) {
-                        chestShop.destroyItem()
                         toRemove.add(chestShop)
                     }
                 }

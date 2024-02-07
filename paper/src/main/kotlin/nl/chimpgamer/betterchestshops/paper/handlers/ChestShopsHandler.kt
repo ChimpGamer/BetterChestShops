@@ -108,7 +108,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
     suspend fun removeChestShops(chestShops: Collection<ChestShop>): AtomicInteger {
         val count = AtomicInteger()
         newSuspendedTransaction(databaseDispatcher) {
-                chestShops.forEach { ChestShopEntity[it.id].delete(); if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet() }
+            chestShops.forEach { ChestShopEntity[it.id].delete(); if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet() }
         }
         return count
     }
