@@ -58,8 +58,8 @@ subprojects {
 
         compileOnly("com.acrobot.chestshop:chestshop:3.12.2")
         compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
-        compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.4")
-        compileOnly("world.bentobox:bentobox:1.24.1-SNAPSHOT")
+        compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
+        compileOnly("world.bentobox:bentobox:2.0.0-SNAPSHOT")
         compileOnly("de.oliver:FancyHolograms:2.0.4")
 
         compileOnly(fileTree("../libs"))
@@ -90,7 +90,12 @@ subprojects {
         }
 
         shadowJar {
-            archiveFileName.set("BetterChestShops-${project.name.capitalizeWords()}-v${project.version}.jar")
+            val buildNumber = System.getenv("BUILD_NUMBER")
+            if (buildNumber == null) {
+                archiveFileName.set("BetterChestShops-v${project.version}.jar")
+            } else {
+                archiveFileName.set("BetterChestShops-v${project.version}-b$buildNumber.jar")
+            }
 
             //relocate("de.tr7zw")
             /*relocate("net.kyori.adventure.text.feature.pagination")
@@ -99,6 +104,10 @@ subprojects {
 
         build {
             dependsOn(shadowJar)
+        }
+
+        jar {
+            enabled = false
         }
     }
 }
