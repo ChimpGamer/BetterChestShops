@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockFromToEvent
+import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import java.math.BigDecimal
@@ -129,6 +130,16 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
         val sign = uBlock.findAnyNearbyShopSign(event.toBlock.getRelative(BlockFace.DOWN)) ?: return
         val chestShop = plugin.chestShopsHandler.getByLocation(sign.location)
         if (chestShop != null) event.isCancelled = true
+    }
+
+    /**
+     * Protect the chestshop containers from being pushed by piston
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onBlockPistonExtend(event: BlockPistonExtendEvent) {
+        if (event.blocks.any { uBlock.couldBeShopContainer(it) }) {
+            event.isCancelled = true
+        }
     }
 
     /**
