@@ -33,6 +33,8 @@ class ChestShop(
 
     val isChunkLoaded: Boolean get() = signLocation.block.world.isChunkLoaded(signLocation.blockX shr 4, signLocation.blockZ shr 4)
 
+    val isValid: Boolean get() = ChestShopSign.isValid(signLocation.block)
+
     val container: Container?
         get() {
             val signBlockState = signLocation.block.state

@@ -3,10 +3,9 @@ package nl.chimpgamer.betterchestshops.paper.commands
 import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
-import com.Acrobot.ChestShop.Signs.ChestShopSign
+import kotlinx.coroutines.runBlocking
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
-import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -46,12 +45,8 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             .suspendingHandler { context ->
                 val sender = context.sender
 
-                val toRemove = HashSet<ChestShop>()
-                plugin.chestShopsHandler.getChestShopsUnordered().forEach { chestShop ->
-                    if (!chestShop.isChunkLoaded) return@forEach
-                    if (!ChestShopSign.isValid(chestShop.signLocation.block)) {
-                        toRemove.add(chestShop)
-                    }
+                val toRemove = runBlocking {
+                    plugin.chestShopsHandler.getChestShopsUnordered().filter { it.isChunkLoaded }.filter { it.isValid }.toSet()
                 }
 
                 val count = plugin.chestShopsHandler.removeChestShops(toRemove)
