@@ -92,9 +92,9 @@ subprojects {
         shadowJar {
             val buildNumber = System.getenv("BUILD_NUMBER")
             if (buildNumber == null) {
-                archiveFileName.set("BetterChestShops-v${project.version}.jar")
+                archiveFileName.set("BetterChestShops-${project.name.capitalizeWords()}-v${project.version}.jar")
             } else {
-                archiveFileName.set("BetterChestShops-v${project.version}-b$buildNumber.jar")
+                archiveFileName.set("BetterChestShops-${project.name.capitalizeWords()}-v${project.version}-b$buildNumber.jar")
             }
 
             //relocate("de.tr7zw")
@@ -104,10 +104,6 @@ subprojects {
 
         build {
             dependsOn(shadowJar)
-        }
-
-        jar {
-            enabled = false
         }
     }
 }
