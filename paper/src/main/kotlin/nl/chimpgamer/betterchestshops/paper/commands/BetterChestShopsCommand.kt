@@ -3,7 +3,9 @@ package nl.chimpgamer.betterchestshops.paper.commands
 import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import org.bukkit.command.CommandSender
@@ -45,7 +47,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             .suspendingHandler { context ->
                 val sender = context.sender
 
-                val toRemove = runBlocking {
+                val toRemove = withContext(plugin.bootstrap.minecraftDispatcher) {
                     plugin.chestShopsHandler.getChestShopsUnordered().filter { it.isChunkLoaded }.filter { it.isValid }.toSet()
                 }
 
