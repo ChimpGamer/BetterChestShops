@@ -105,6 +105,10 @@ subprojects {
         build {
             dependsOn(shadowJar)
         }
+
+        jar {
+            enabled = false
+        }
     }
 }
 
