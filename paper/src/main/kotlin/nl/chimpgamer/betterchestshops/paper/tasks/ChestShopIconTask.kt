@@ -15,7 +15,6 @@ class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) : Runnable {
             plugin.runSync { chestShop.spawnItem() }
         }
 
-        val end = System.currentTimeMillis() - time
-        plugin.debug("ChestShopIconTask took ${end}ms to run through $count chestshops.")
+        plugin.debug { "ChestShopIconTask took ${System.currentTimeMillis() - time}ms to run through $count chestshops." }
     }
 }

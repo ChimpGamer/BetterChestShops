@@ -139,7 +139,8 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
     fun callEventSync(event: Event) = runSync { callEvent(event) }
 
-    fun debug(message: Any) {
+    fun debug(message: () -> Any) {
+        if (!settingsConfig.debug) return
         if (message is Component) {
             bootstrap.componentLogger.info(message)
         } else {
