@@ -48,7 +48,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
                 val sender = context.sender
 
                 val toRemove = withContext(plugin.bootstrap.minecraftDispatcher) {
-                    plugin.chestShopsHandler.getChestShopsUnordered().filter { it.isChunkLoaded }.filter { it.isValid }.toSet()
+                    plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
                 }
 
                 val count = plugin.chestShopsHandler.removeChestShops(toRemove)
