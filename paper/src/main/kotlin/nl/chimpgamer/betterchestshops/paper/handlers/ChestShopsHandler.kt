@@ -113,7 +113,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         return count
     }
 
-    fun getChestShops() = chestShops.values.toList()
+    fun getChestShops(): Collection<ChestShop> = chestShops.values
 
     fun getChestShopsUnordered() = chestShops.values.toSet()
 
