@@ -5,6 +5,7 @@ import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 
 interface HologramHandler {
+    val name: String
 
     fun displayItem(chestShop: ChestShop, containerLocation: Location, itemStack: ItemStack)
 

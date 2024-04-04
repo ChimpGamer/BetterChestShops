@@ -16,7 +16,7 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
     fun initialize() {
         determineHologramHandler()
 
-        plugin.logger.info(hologramHandler::class.java.simpleName + " is the hologramHandler")
+        plugin.logger.info(hologramHandler.name + " is the hologramHandler")
     }
 
     fun reload() {

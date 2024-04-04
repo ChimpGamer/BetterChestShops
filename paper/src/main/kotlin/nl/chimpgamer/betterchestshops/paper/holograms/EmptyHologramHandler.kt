@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack
 
 class EmptyHologramHandler : HologramHandler {
 
+    override val name: String = "empty"
+
     override fun displayItem(chestShop: ChestShop, containerLocation: Location, itemStack: ItemStack) {
 
     }

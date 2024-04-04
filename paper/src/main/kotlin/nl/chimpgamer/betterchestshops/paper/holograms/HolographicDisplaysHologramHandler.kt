@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap
 class HolographicDisplaysHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramHandler {
     private val locationToHologram: MutableMap<Location, Hologram> = ConcurrentHashMap()
 
+    override val name: String = "HolographicDisplays"
+
     override fun displayItem(chestShop: ChestShop, containerLocation: Location, itemStack: ItemStack) {
         var displayLocation = Location(
             containerLocation.world,

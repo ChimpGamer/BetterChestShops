@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
 class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramHandler {
     private val locationToHologram: MutableMap<Location, CMIHologram> = ConcurrentHashMap()
 
+    override val name: String = "CMI"
+
     override fun displayItem(chestShop: ChestShop, containerLocation: Location, itemStack: ItemStack) {
         var displayLocation = Location(
             containerLocation.world,
