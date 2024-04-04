@@ -4,7 +4,6 @@ import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
@@ -26,6 +25,19 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
                 val sender = context.sender as Player
                 val page = context.getOptional(pageArgument).orElse(1)
                 ChestShopsMenu(plugin).inventory.open(sender, page)
+            }
+        )
+
+        commandManager.command(builder
+            .literal("about")
+            .permission("$basePermission.about")
+            .handler { context ->
+                val sender = context.sender
+                sender.sendRichMessage("    <gold>BetterChestShops<br>" +
+                        "<gray>Version > <yellow>${plugin.version}<br>" +
+                        "<gray>HologramHandler > <yellow>${plugin.hologramManager.hologramHandler.name}<br>" +
+                        "<gray>ChestShops Registered > <yellow>${plugin.chestShopsHandler.getChestShops().size}"
+                )
             }
         )
 
