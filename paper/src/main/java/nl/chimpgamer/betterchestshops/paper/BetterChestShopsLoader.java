@@ -26,7 +26,7 @@ public class BetterChestShopsLoader implements PluginLoader {
             add("cloud.commandframework:cloud-paper:1.8.4");
             add("cloud.commandframework:cloud-minecraft-extras:1.8.4");
              add("cloud.commandframework:cloud-kotlin-coroutines:1.8.4");
-            add("dev.dejvokep:boosted-yaml:1.3.1");
+            add("dev.dejvokep:boosted-yaml:1.3.5");
         }};
 
         var mavenLibraryResolver = new MavenLibraryResolver();
