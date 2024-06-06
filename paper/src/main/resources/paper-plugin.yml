@@ -26,3 +26,6 @@ dependencies:
   - name: FancyHolograms
     required: false
     bootstrap: false
+  - name: BentoBox
+    required: false
+    bootstrap: false
