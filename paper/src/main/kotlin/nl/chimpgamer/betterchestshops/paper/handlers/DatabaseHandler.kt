@@ -27,7 +27,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         if (storageType == "sqlite") {
             databaseDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
             database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
-                defaultMinRepetitionDelay = 100L
+                defaultMinRetryDelay = 100L
                 defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
             })
         } else if (storageType == "mysql" || storageType == "mariadb") {
