@@ -22,7 +22,7 @@ public class BetterChestShopsLoader implements PluginLoader {
             add("org.jetbrains.exposed:exposed-jdbc:0.51.1");
             add("org.jetbrains.exposed:exposed-java-time:0.51.1");
             add("org.xerial:sqlite-jdbc:3.46.0.0");
-            add("org.mariadb.jdbc:mariadb-java-client:3.3.3");
+            add("org.mariadb.jdbc:mariadb-java-client:3.4.0");
             add("cloud.commandframework:cloud-paper:1.8.4");
             add("cloud.commandframework:cloud-minecraft-extras:1.8.4");
              add("cloud.commandframework:cloud-kotlin-coroutines:1.8.4");
