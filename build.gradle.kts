@@ -98,8 +98,11 @@ subprojects {
             }
 
             //relocate("de.tr7zw")
-            /*relocate("net.kyori.adventure.text.feature.pagination")
-            relocate("org.bstats")*/
+            /*relocate("net.kyori.adventure.text.feature.pagination")*/
+            relocate("org.bstats", "nl.chimpgamer.betterchestshops.shaded.bstats")
+            relocate("com.github.shynixn.mccoroutine", "nl.chimpgamer.betterchestshops.shaded.mccoroutine")
+            relocate("io.github.rysefoxx.inventory", "nl.chimpgamer.betterchestshops.shaded.ryseinventory")
+            relocate("io.github.rysefoxx.inventory", "nl.chimpgamer.betterchestshops.shaded.ryseinventory")
         }
 
         build {
