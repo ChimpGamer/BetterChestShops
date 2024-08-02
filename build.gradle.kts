@@ -1,5 +1,7 @@
 import java.util.*
 
+val exposedVersion = "0.52.0"
+
 plugins {
     kotlin("jvm") version "1.9.24"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -40,16 +42,16 @@ subprojects {
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
         compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
         implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
-        compileOnly("org.jetbrains.exposed:exposed-core:0.51.1") {
+        compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-dao:0.51.1") {
+        compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-jdbc:0.51.1") {
+        compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-java-time:0.51.1") {
+        compileOnly("org.jetbrains.exposed:exposed-java-time:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
         compileOnly("org.xerial:sqlite-jdbc:3.46.0.0")
