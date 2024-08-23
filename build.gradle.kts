@@ -59,7 +59,7 @@ subprojects {
         compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
         compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
         compileOnly("world.bentobox:bentobox:2.0.0-SNAPSHOT")
-        compileOnly("de.oliver:FancyHolograms:2.0.4")
+        compileOnly("de.oliver:FancyHolograms:2.3.3")
 
         compileOnly(fileTree("../libs"))
     }

@@ -2,11 +2,8 @@ package nl.chimpgamer.betterchestshops.paper.holograms
 
 import com.github.shynixn.mccoroutine.folia.regionDispatcher
 import de.oliver.fancyholograms.api.FancyHologramsPlugin
-import de.oliver.fancyholograms.api.Hologram
-import de.oliver.fancyholograms.api.HologramType
-import de.oliver.fancyholograms.api.data.DisplayHologramData
-import de.oliver.fancyholograms.api.data.HologramData
 import de.oliver.fancyholograms.api.data.ItemHologramData
+import de.oliver.fancyholograms.api.hologram.Hologram
 import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
@@ -40,10 +37,8 @@ class FancyHologramsHologramHandler(private val plugin: BetterChestShopsPlugin) 
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
         val hologramManager = FancyHologramsPlugin.get().hologramManager
-        val displayData = DisplayHologramData.getDefault(displayLocation)
-        displayData.billboard = Display.Billboard.FIXED
-        val itemHologramData = ItemHologramData.getDefault().setItem(itemStack)
-        val hologramData = HologramData(UUID.randomUUID().toString(), displayData, HologramType.ITEM, itemHologramData)
+        val hologramData = ItemHologramData(UUID.randomUUID().toString(), displayLocation)
+        hologramData.billboard = Display.Billboard.FIXED
         val hologram = hologramManager.create(hologramData)
 
         hologram.createHologram()
