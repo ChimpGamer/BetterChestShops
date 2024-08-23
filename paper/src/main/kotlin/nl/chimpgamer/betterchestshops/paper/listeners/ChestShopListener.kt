@@ -167,7 +167,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    fun onChunkLoad(event: ChunkLoadEvent) {
+    suspend fun onChunkLoad(event: ChunkLoadEvent) {
         if (event.isNewChunk) return
         // Load chestshop items if there are chestshops in this chunk.
 

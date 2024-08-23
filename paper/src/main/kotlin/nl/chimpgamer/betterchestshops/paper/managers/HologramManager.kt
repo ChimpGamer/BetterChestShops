@@ -1,5 +1,7 @@
 package nl.chimpgamer.betterchestshops.paper.managers
 
+import com.github.shynixn.mccoroutine.folia.asyncDispatcher
+import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.holograms.*
 
@@ -23,7 +25,9 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
         hologramHandler.destroyItems()
 
         initialize()
-        plugin.chestShopIconTask.run()
+        plugin.launch(plugin.bootstrap.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
+            plugin.chestShopIconTask.run()
+        }
     }
 
     private fun determineHologramHandler() {

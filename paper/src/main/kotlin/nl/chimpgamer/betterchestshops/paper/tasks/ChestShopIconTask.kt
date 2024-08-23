@@ -1,12 +1,12 @@
 package nl.chimpgamer.betterchestshops.paper.tasks
 
 import com.github.shynixn.mccoroutine.folia.regionDispatcher
-import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 
-class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) : Runnable {
+class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) {
 
-    override fun run() {
+    suspend fun run() {
         val time = System.currentTimeMillis()
         var count = 0
         plugin.chestShopsHandler.getChestShops().forEach { chestShop ->
@@ -14,7 +14,7 @@ class ChestShopIconTask(private val plugin: BetterChestShopsPlugin) : Runnable {
             // Check if chunk is loaded before continuing.
             if (!signLocation.isChunkLoaded) return@forEach
             count++
-            plugin.launch(plugin.bootstrap.regionDispatcher(signLocation), CoroutineStart.UNDISPATCHED) {
+            withContext(plugin.bootstrap.regionDispatcher(signLocation)) {
                 chestShop.spawnItem()
             }
         }
