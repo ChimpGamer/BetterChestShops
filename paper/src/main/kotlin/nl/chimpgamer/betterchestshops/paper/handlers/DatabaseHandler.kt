@@ -1,6 +1,8 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
-import kotlinx.coroutines.Dispatchers
+import com.github.shynixn.mccoroutine.folia.asyncDispatcher
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.asCoroutineDispatcher
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
@@ -17,7 +19,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
 
     val isDatabaseInitialized: Boolean get() = this::database.isInitialized
 
-    var databaseDispatcher = Dispatchers.IO
+    val databaseDispatcher get() = plugin.bootstrap.asyncDispatcher
 
     private fun connect() {
         val databaseFile = plugin.dataFolder.resolve("data.db")
@@ -25,7 +27,16 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         val storageType = settings.storageType.lowercase()
 
         if (storageType == "sqlite") {
-            databaseDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+            val hikariConfig = HikariConfig().apply {
+                poolName = "BetterChestShops-pool"
+                jdbcUrl = "jdbc:sqlite:${databaseFile.absolutePath}"
+                driverClassName = "org.sqlite.JDBC"
+                maximumPoolSize = 1
+                transactionIsolation = "TRANSACTION_SERIALIZABLE"
+            }
+            database = Database.connect(HikariDataSource(hikariConfig), databaseConfig = DatabaseConfig {
+                defaultMinRetryDelay = 100L
+            })
             database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
                 defaultMinRetryDelay = 100L
                 defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
@@ -36,21 +47,47 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
             val databaseName = settings.storageDatabase
             val username = settings.storageUsername
             val password = settings.storagePassword
-            val properties = settings.storageProperties
+            val properties = settings.storageProperties.toMutableMap()
+            if (storageType == "mysql") {
+                properties.apply {
+                    putIfAbsent("cachePrepStmts", "true")
+                    putIfAbsent("prepStmtCacheSize", "250")
+                    putIfAbsent("prepStmtCacheSqlLimit", "2048")
+                    putIfAbsent("useServerPrepStmts", "true")
+                    putIfAbsent("useLocalSessionState", "true")
+                    putIfAbsent("rewriteBatchedStatements", "true")
+                    putIfAbsent("cacheResultSetMetadata", "true")
+                    putIfAbsent("cacheServerConfiguration", "true")
+                    putIfAbsent("elideSetAutoCommits", "true")
+                    putIfAbsent("maintainTimeStats", "true")
+                    putIfAbsent("alwaysSendSetIsolation", "false")
+                    putIfAbsent("cacheCallableStmts", "true")
+                }
+            }
 
             var url = "jdbc:$storageType://$host:$port/$databaseName"
             if (properties.isNotEmpty()) {
                 url += "?" + properties.map { "${it.key}=${it.value}" }.joinToString("&")
             }
 
-            database = Database.connect(
-                url,
-                user = username,
-                password = password,
-                databaseConfig = DatabaseConfig {
-                    defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+            val hikariConfig = HikariConfig().apply {
+                poolName = "UltimateMobCoins-pool"
+                jdbcUrl = url
+                driverClassName = if (storageType == "mysql") {
+                    "com.mysql.cj.jdbc.Driver"
+                } else {
+                    "org.mariadb.jdbc.Driver"
                 }
-            )
+                this.username = username
+                this.password = password
+                this.maximumPoolSize = settings.storagePoolSettingsMaximumPoolSize
+                this.minimumIdle = settings.storagePoolSettingsMinimumIdle
+                this.maxLifetime = settings.storagePoolSettingsMaximumLifetime
+                this.connectionTimeout = settings.storagePoolSettingsConnectionTimeout
+                this.initializationFailTimeout = -1
+            }
+
+            database = Database.connect(HikariDataSource(hikariConfig))
         }
     }
 

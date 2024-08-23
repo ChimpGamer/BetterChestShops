@@ -38,10 +38,6 @@ subprojects {
         compileOnly(kotlin("stdlib"))
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.7")
-        compileOnly("cloud.commandframework:cloud-paper:1.8.4")
-        compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
-        compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
-        implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
         compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
@@ -57,6 +53,7 @@ subprojects {
         compileOnly("org.xerial:sqlite-jdbc:3.46.0.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
+        compileOnly("com.zaxxer:HikariCP:5.1.0")
 
         compileOnly("com.acrobot.chestshop:chestshop:3.12.2")
         compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
@@ -103,7 +100,6 @@ subprojects {
             /*relocate("net.kyori.adventure.text.feature.pagination")*/
             relocate("org.bstats", "nl.chimpgamer.betterchestshops.shaded.bstats")
             relocate("com.github.shynixn.mccoroutine", "nl.chimpgamer.betterchestshops.shaded.mccoroutine")
-            relocate("io.github.rysefoxx.inventory", "nl.chimpgamer.betterchestshops.shaded.ryseinventory")
             relocate("io.github.rysefoxx.inventory", "nl.chimpgamer.betterchestshops.shaded.ryseinventory")
         }
 

@@ -1,11 +1,11 @@
 package nl.chimpgamer.betterchestshops.paper
 
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.Acrobot.ChestShop.Events.PreShopCreationEvent
+import com.Acrobot.ChestShop.Events.ShopCreatedEvent
+import com.Acrobot.ChestShop.Events.ShopDestroyedEvent
+import com.github.shynixn.mccoroutine.folia.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import nl.chimpgamer.betterchestshops.paper.commands.CloudCommandManager
@@ -21,7 +21,12 @@ import nl.chimpgamer.betterchestshops.paper.tasks.ChestShopIconTask
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockFromToEvent
+import org.bukkit.event.block.BlockPistonExtendEvent
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.world.ChunkLoadEvent
+import world.bentobox.bentobox.api.events.island.IslandPreclearEvent
 import java.io.IOException
 import java.nio.file.Files
 import java.util.*
@@ -71,14 +76,63 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         hookManager.load()
 
         val pluginManager = server.pluginManager
-        pluginManager.registerSuspendingEvents(ChestShopListener(this), this.bootstrap)
+        val eventDispatcher = mapOf<Class<out Event>, (event: Event) -> CoroutineContext>(
+            Pair(MCCoroutineExceptionEvent::class.java) {
+                require(it is MCCoroutineExceptionEvent)
+                bootstrap.globalRegionDispatcher
+            },
+            Pair(ShopCreatedEvent::class.java) {
+                require(it is ShopCreatedEvent)
+                bootstrap.entityDispatcher(it.player)
+            },
+            Pair(ShopDestroyedEvent::class.java) {
+                require(it is ShopDestroyedEvent)
+                val destroyer = it.destroyer
+                if (destroyer != null) bootstrap.entityDispatcher(destroyer) else bootstrap.globalRegionDispatcher
+            },
+            Pair(BlockBreakEvent::class.java) {
+                require(it is BlockBreakEvent)
+                bootstrap.entityDispatcher(it.player)
+            },
+            Pair(BlockPistonExtendEvent::class.java) {
+                require(it is BlockPistonExtendEvent)
+                bootstrap.regionDispatcher(it.block.location)
+            },
+            Pair(BlockPlaceEvent::class.java) {
+                require(it is BlockPlaceEvent)
+                bootstrap.regionDispatcher(it.block.location)
+            },
+            Pair(ChunkLoadEvent::class.java) {
+                require(it is ChunkLoadEvent)
+                bootstrap.regionDispatcher(it.world, it.chunk.x, it.chunk.z)
+            },
+            Pair(BlockFromToEvent::class.java) {
+                require(it is BlockFromToEvent)
+                bootstrap.regionDispatcher(it.block.location)
+            },
+            Pair(PreShopCreationEvent::class.java) {
+                require(it is PreShopCreationEvent)
+                bootstrap.entityDispatcher(it.player)
+            },
+        )
+
+        pluginManager.registerSuspendingEvents(ChestShopListener(this), bootstrap, eventDispatcher)
 
 
         if (pluginManager.isPluginEnabled("BentoBox")) {
-            pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap)
+            pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap, mapOf(
+                Pair(MCCoroutineExceptionEvent::class.java) {
+                    require(it is MCCoroutineExceptionEvent)
+                    bootstrap.globalRegionDispatcher
+                },
+                Pair(IslandPreclearEvent::class.java) {
+                    require(it is IslandPreclearEvent)
+                    bootstrap.globalRegionDispatcher
+                },
+            ))
         }
 
-        launch(Dispatchers.IO) {
+        launch(bootstrap.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
             while (true) {
                 chestShopIconTask.run()
                 delay(settingsConfig.hologramRefreshInterval.seconds)
@@ -109,35 +163,11 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
     fun getResource(filename: String) = bootstrap.getResource(filename)
 
-    fun registerEvents(
-        vararg listeners: Listener
-    ) = listeners.forEach { server.pluginManager.registerEvents(it, bootstrap) }
-
     fun launch(
-        context: CoroutineContext = bootstrap.minecraftDispatcher,
+        context: CoroutineContext = bootstrap.globalRegionDispatcher,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ) = bootstrap.launch(context, start, block)
-
-    fun runSync(runnable: Runnable) {
-        if (server.isPrimaryThread) {
-            runnable.run()
-        } else {
-            server.scheduler.runTask(bootstrap, runnable)
-        }
-    }
-
-    fun runAsync(runnable: Runnable) {
-        if (!server.isPrimaryThread) {
-            runnable.run()
-        } else {
-            server.scheduler.runTaskAsynchronously(bootstrap, runnable)
-        }
-    }
-
-    fun callEvent(event: Event) = server.pluginManager.callEvent(event)
-
-    fun callEventSync(event: Event) = runSync { callEvent(event) }
 
     fun debug(message: () -> Any) {
         if (!settingsConfig.debug) return

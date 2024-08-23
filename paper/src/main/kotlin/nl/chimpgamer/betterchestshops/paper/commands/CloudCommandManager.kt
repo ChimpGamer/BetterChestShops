@@ -1,52 +1,51 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
-import cloud.commandframework.bukkit.CloudBukkitCapabilities
-import cloud.commandframework.exceptions.NoPermissionException
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
-import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler
-import cloud.commandframework.paper.PaperCommandManager
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.parse
 import org.bukkit.command.CommandSender
-import java.util.function.Function
+import org.bukkit.entity.Player
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities
+import org.incendo.cloud.caption.CaptionProvider
+import org.incendo.cloud.caption.StandardCaptionKeys
+import org.incendo.cloud.exception.InvalidSyntaxException
+import org.incendo.cloud.exception.NoPermissionException
+import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
+import org.incendo.cloud.minecraft.extras.MinecraftHelp
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter
+import org.incendo.cloud.paper.LegacyPaperCommandManager
 import java.util.logging.Level
 
 class CloudCommandManager(private val plugin: BetterChestShopsPlugin) {
 
-    private lateinit var paperCommandManager: PaperCommandManager<CommandSender>
+    private lateinit var paperCommandManager: LegacyPaperCommandManager<CommandSender>
 
     fun initialize() {
-        val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
-
         try {
-            paperCommandManager = PaperCommandManager(
+            paperCommandManager = LegacyPaperCommandManager.createNative(
                 plugin.bootstrap,
-                executionCoordinatorFunction,
-                Function.identity(),
-                Function.identity()
+                ExecutionCoordinator.asyncCoordinator()
             )
 
             if (paperCommandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
                 paperCommandManager.registerBrigadier()
                 val brigadierManager = paperCommandManager.brigadierManager()
-                brigadierManager?.setNativeNumberSuggestions(false)
-            }
-            if (paperCommandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+                brigadierManager.setNativeNumberSuggestions(false)
+            } else if (paperCommandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
                 paperCommandManager.registerAsynchronousCompletions()
             }
 
-            MinecraftExceptionHandler<CommandSender>()
-                .withArgumentParsingHandler()
-                .withInvalidSenderHandler()
-                .withInvalidSyntaxHandler()
-                .withNoPermissionHandler()
-                .withCommandExecutionHandler()
-                .withHandler(MinecraftExceptionHandler.ExceptionType.NO_PERMISSION) { e ->
-                    e as NoPermissionException
-                    plugin.messagesConfig.noPermission.parse(Placeholder.parsed("missing_permission", e.missingPermission))
-                }
-                .apply(paperCommandManager) { it }
+            paperCommandManager.captionRegistry().run {
+                registerProvider(MinecraftHelp.defaultCaptionsProvider())
+                registerProvider(CaptionProvider.constantProvider(StandardCaptionKeys.EXCEPTION_NO_PERMISSION, plugin.messagesConfig.noPermission))
+            }
+
+            MinecraftExceptionHandler.createNative<CommandSender>()
+                .defaultHandlers()
+                .captionFormatter(ComponentCaptionFormatter.miniMessage())
+                .registerTo(paperCommandManager)
         } catch (ex: Exception) {
             plugin.logger.log(Level.SEVERE, "Failed to initialize the command manager", ex)
         }

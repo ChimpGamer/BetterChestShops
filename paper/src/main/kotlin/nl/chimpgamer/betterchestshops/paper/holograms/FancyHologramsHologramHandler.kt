@@ -1,11 +1,13 @@
 package nl.chimpgamer.betterchestshops.paper.holograms
 
+import com.github.shynixn.mccoroutine.folia.regionDispatcher
 import de.oliver.fancyholograms.api.FancyHologramsPlugin
 import de.oliver.fancyholograms.api.Hologram
 import de.oliver.fancyholograms.api.HologramType
 import de.oliver.fancyholograms.api.data.DisplayHologramData
 import de.oliver.fancyholograms.api.data.HologramData
 import de.oliver.fancyholograms.api.data.ItemHologramData
+import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
@@ -51,7 +53,9 @@ class FancyHologramsHologramHandler(private val plugin: BetterChestShopsPlugin) 
 
     override fun destroyItem(location: Location) {
         val hologram = locationToHologram.remove(location) ?: return
-        plugin.runSync { hologram.hideHologram(plugin.server.onlinePlayers) }
+        plugin.launch(plugin.bootstrap.regionDispatcher(location), CoroutineStart.UNDISPATCHED) {
+            hologram.hideHologram(plugin.server.onlinePlayers)
+        }
         hologram.deleteHologram()
     }
 

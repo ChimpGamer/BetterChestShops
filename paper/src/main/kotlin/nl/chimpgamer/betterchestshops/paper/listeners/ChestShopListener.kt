@@ -7,7 +7,7 @@ import com.Acrobot.ChestShop.Events.ShopCreatedEvent
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent
 import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.Acrobot.ChestShop.Utils.uBlock
-import com.github.shynixn.mccoroutine.bukkit.ticks
+import com.github.shynixn.mccoroutine.folia.ticks
 import kotlinx.coroutines.delay
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType

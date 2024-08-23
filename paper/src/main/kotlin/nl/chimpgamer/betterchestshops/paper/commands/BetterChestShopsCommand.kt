@@ -1,29 +1,29 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
-import cloud.commandframework.CommandManager
-import cloud.commandframework.arguments.standard.IntegerArgument
-import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
-import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.incendo.cloud.CommandManager
+import org.incendo.cloud.component.DefaultValue
+import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 
 class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
 
     fun registerCommands(commandManager: CommandManager<CommandSender>, name: String, vararg aliases: String) {
-        val pageArgument = IntegerArgument.optional<CommandSender>("page")
-
         val basePermission = "betterchestshops.command"
         val builder = commandManager.commandBuilder(name, *aliases)
             .permission(basePermission)
 
         commandManager.command(builder
             .senderType(Player::class.java)
+            .optional("page", integerParser(), DefaultValue.constant(1))
             .handler { context ->
-                val sender = context.sender as Player
-                val page = context.getOptional(pageArgument).orElse(1)
+                val sender = context.sender()
+                val page = context.get<Int>("page")
                 ChestShopsMenu(plugin).inventory.open(sender, page)
             }
         )
@@ -32,7 +32,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             .literal("about")
             .permission("$basePermission.about")
             .handler { context ->
-                val sender = context.sender
+                val sender = context.sender()
                 sender.sendRichMessage("    <gold>BetterChestShops<br>" +
                         "<gray>Version > <yellow>${plugin.version}<br>" +
                         "<gray>HologramHandler > <yellow>${plugin.hologramManager.hologramHandler.name}<br>" +
@@ -45,7 +45,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             .literal("reload")
             .permission("$basePermission.reload")
             .handler { context ->
-                val sender = context.sender
+                val sender = context.sender()
                 plugin.settingsConfig.config.reload()
                 plugin.hologramManager.reload()
 
@@ -57,9 +57,9 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             .literal("clearinvalid")
             .permission("$basePermission.clearinvalid")
             .suspendingHandler { context ->
-                val sender = context.sender
+                val sender = context.sender()
 
-                val toRemove = withContext(plugin.bootstrap.minecraftDispatcher) {
+                val toRemove = withContext(plugin.bootstrap.globalRegionDispatcher) {
                     plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
                 }
 
