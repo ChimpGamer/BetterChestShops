@@ -75,13 +75,6 @@ subprojects {
     }
 
     tasks {
-        compileKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
-        compileTestKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
-
         processResources {
             filesMatching("**/*.yml") {
                 expand("version" to project.version)
@@ -114,13 +107,6 @@ subprojects {
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
     jar {
         enabled = false
     }
