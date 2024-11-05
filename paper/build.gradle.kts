@@ -9,10 +9,10 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:2.11.5")
 
-    compileOnly("org.incendo:cloud-core:2.0.0-rc.2")
+    compileOnly("org.incendo:cloud-core:2.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.9")
     compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
-    compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2")
+    compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0")
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.19.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.19.0") { isTransitive = false }
