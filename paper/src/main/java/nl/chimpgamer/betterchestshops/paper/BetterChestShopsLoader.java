@@ -15,12 +15,11 @@ public class BetterChestShopsLoader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
         var dependencies = new ArrayList<String>() {{
-            add("org.jetbrains.kotlin:kotlin-stdlib:1.9.24");
-            add("org.jetbrains.kotlin:kotlin-reflect:1.9.24");
-            add("org.jetbrains.exposed:exposed-core:0.52.0");
-            add("org.jetbrains.exposed:exposed-dao:0.52.0");
-            add("org.jetbrains.exposed:exposed-jdbc:0.52.0");
-            add("org.jetbrains.exposed:exposed-java-time:0.52.0");
+            add("org.jetbrains.kotlin:kotlin-stdlib:2.0.21");
+            add("org.jetbrains.exposed:exposed-core:0.56.0");
+            add("org.jetbrains.exposed:exposed-dao:0.56.0");
+            add("org.jetbrains.exposed:exposed-jdbc:0.56.0");
+            add("org.jetbrains.exposed:exposed-java-time:0.56.0");
             add("org.xerial:sqlite-jdbc:3.46.0.0");
             add("org.mariadb.jdbc:mariadb-java-client:3.4.0");
             add("org.incendo:cloud-core:2.0.0");

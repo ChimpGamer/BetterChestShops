@@ -1,9 +1,9 @@
 import java.util.*
 
-val exposedVersion = "0.52.0"
+val exposedVersion = "0.56.0"
 
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "2.0.21"
     id("com.gradleup.shadow") version "8.3.5"
 }
 
