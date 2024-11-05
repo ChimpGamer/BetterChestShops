@@ -3,7 +3,6 @@ package nl.chimpgamer.betterchestshops.paper.handlers
 import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.asCoroutineDispatcher
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.jetbrains.exposed.sql.Database
@@ -11,8 +10,6 @@ import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.Connection
-import java.util.concurrent.Executors
 
 class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
     private lateinit var database: Database
@@ -36,10 +33,6 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
             }
             database = Database.connect(HikariDataSource(hikariConfig), databaseConfig = DatabaseConfig {
                 defaultMinRetryDelay = 100L
-            })
-            database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
-                defaultMinRetryDelay = 100L
-                defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
             })
         } else if (storageType == "mysql" || storageType == "mariadb") {
             val host = settings.storageHost
