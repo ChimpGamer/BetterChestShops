@@ -5,6 +5,7 @@ import com.Acrobot.ChestShop.Utils.uBlock
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.capitalizeWords
 import nl.chimpgamer.betterchestshops.paper.utils.LocationUtils
+import nl.chimpgamer.betterchestshops.paper.utils.Utils
 import org.bukkit.Bukkit
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Container
@@ -46,9 +47,12 @@ class ChestShop(
             return null
         }
 
-    val creatorName: String? get() = Bukkit.getServer().getOfflinePlayer(creatorUUID).name
+    val creatorName: String? = if (BetterChestShopsPlugin.instance.consoleUUID == creatorUUID) "Admin Shop" else Bukkit.getServer().getOfflinePlayer(creatorUUID).name
 
     val friendlyItemTypeName = (itemStack?.type?.name ?: "Nothing").lowercase().capitalizeWords()
+
+    val buyPriceFormatted = Utils.formatPrice(buyPrice)
+    val sellPriceFormatted = Utils.formatPrice(sellPrice)
 
     fun spawnItem() {
         val container = this.container ?: return

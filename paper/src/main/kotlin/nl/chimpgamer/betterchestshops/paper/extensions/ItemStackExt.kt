@@ -32,6 +32,10 @@ fun ItemStack.name(name: Component): ItemStack {
     return this
 }
 
+fun ItemStack.richName(name: String): ItemStack {
+    return name(name.parse())
+}
+
 fun ItemStack.lore(text: Component): ItemStack {
     meta {
         val lore = lore() ?: ArrayList()
@@ -65,6 +69,8 @@ fun ItemStack.lore(text: List<String>): ItemStack {
     }
     return this
 }
+
+fun ItemStack.richLore(text: String): ItemStack = lore(text.parse())
 
 fun ItemStack.enchantment(enchantment: Enchantment, level: Int): ItemStack {
     if (type === Material.ENCHANTED_BOOK) {

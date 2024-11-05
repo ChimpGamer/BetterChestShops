@@ -46,7 +46,10 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
     override fun init(player: Player, contents: InventoryContents) {
         var chestShops = plugin.chestShopsHandler.getAllByCreator(player.uniqueId).reversed()
 
-        val pagination = contents.pagination()
+        val pagination = contents.pagination().apply {
+            itemsPerPage = 45
+            iterator(SlotIterator.builder().startPosition(0).type(SlotIterator.SlotIteratorType.HORIZONTAL).build())
+        }
 
         val searchInput = contents.getProperty<String>("mychestshop_search_input")
         if (searchInput != null) {
@@ -64,12 +67,12 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
 
                 val icon = runCatching { Material.valueOf(containerType.name) }.getOrNull() ?: Material.BARRIER
 
-                val loreLine1 = if (buyPrice != null && sellPrice != null) {
-                    "<white>Buy/Sell Price: <yellow>${Utils.formatPrice(buyPrice)}/${Utils.formatPrice(sellPrice)} Coin(s)"
-                } else if (buyPrice != null) {
-                    "<white>Sell Price: <yellow>${Utils.formatPrice(buyPrice)} Coin(s)"
-                } else if (sellPrice != null) {
-                    "<white>Buy Price: <yellow>${Utils.formatPrice(sellPrice)} Coin(s)"
+                val loreLine1 = if (buyPriceFormatted != null && sellPriceFormatted != null) {
+                    "<white>Buy/Sell Price: <yellow>$buyPriceFormatted/$sellPriceFormatted Coin(s)"
+                } else if (sellPriceFormatted != null) {
+                    "<white>Sell Price: <yellow>$sellPriceFormatted Coin(s)"
+                } else if (buyPriceFormatted != null) {
+                    "<white>Buy Price: <yellow>$buyPriceFormatted Coin(s)"
                 } else {
                     "<red>Invalid ChestShop!"
                 }
@@ -118,18 +121,17 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
             }
         }
 
-        pagination.itemsPerPage = 45
-        pagination.iterator(
-            SlotIterator.builder().startPosition(0).type(SlotIterator.SlotIteratorType.HORIZONTAL).build()
-        )
-
-        contents[45] = IntelligentItem.of(Constants.previousPageButton.name("<yellow>⇽ <gold>Previous Page".parse())) {
+        contents[45] = IntelligentItem.of(Constants.previousPageButton.richName("<yellow>⇽ <gold>Previous Page")) {
             if (!pagination.isFirst) {
                 inventory.open(player, pagination.previous().page())
             }
         }
 
-        contents[46] = IntelligentItem.of(ItemStack(Material.COMPASS).name("Search ChestShop")) {
+        contents[49] = IntelligentItem.of(ItemStack(Material.IRON_DOOR).richName("<red>Close")) {
+            inventory.close(player)
+        }
+
+        contents[51] = IntelligentItem.of(ItemStack(Material.COMPASS).richName("<gold>Search ChestShop")) {
             inventory.close(player)
             val playerChatInputBuilder = Utils.createChatInputBuilderBase(plugin, player)
                 .isValidInput { _, input -> input.isNotEmpty() }
@@ -146,11 +148,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
             player.showTitle(title)
         }
 
-        contents[49] = IntelligentItem.of(ItemStack(Material.IRON_DOOR).name("<red>Close".parse())) {
-            inventory.close(player)
-        }
-
-        contents[53] = IntelligentItem.of(Constants.nextPageButton.name("<gold>Next Page <yellow>⇾".parse())) {
+        contents[53] = IntelligentItem.of(Constants.nextPageButton.richName("<gold>Next Page <yellow>⇾")) {
             if (!pagination.isLast) {
                 inventory.open(player, pagination.next().page())
             }

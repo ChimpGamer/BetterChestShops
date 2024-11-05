@@ -4,11 +4,13 @@ import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
+import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.parser.standard.EnumParser.enumParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 
 class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
@@ -21,10 +23,12 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
         commandManager.command(builder
             .senderType(Player::class.java)
             .optional("page", integerParser(), DefaultValue.constant(1))
+            .optional("sortby", enumParser(ChestShopSortBy::class.java), DefaultValue.constant(ChestShopSortBy.BUY_AND_SELL_PRICE))
             .handler { context ->
                 val sender = context.sender()
                 val page = context.get<Int>("page")
-                ChestShopsMenu(plugin).inventory.open(sender, page)
+                val sortBy = context.get<ChestShopSortBy>("sortby")
+                ChestShopsMenu(plugin).inventory.open(sender, page, mapOf("chestshop_sort_by" to sortBy))
             }
         )
 

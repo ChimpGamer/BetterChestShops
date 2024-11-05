@@ -16,12 +16,15 @@ import net.kyori.adventure.title.Title
 import net.kyori.adventure.util.Ticks
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.*
+import nl.chimpgamer.betterchestshops.paper.models.ChestShop
+import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
 import nl.chimpgamer.betterchestshops.paper.utils.Constants
 import nl.chimpgamer.betterchestshops.paper.utils.Utils
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.inventory.ItemStack
+import java.math.BigDecimal
 import java.time.Duration
 import kotlin.jvm.optionals.getOrNull
 
@@ -51,7 +54,18 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
     override fun init(player: Player, contents: InventoryContents) {
         var chestShops = plugin.chestShopsHandler.getChestShops().reversed()
 
-        val pagination = contents.pagination()
+        val pagination = contents.pagination().apply {
+            itemsPerPage = 45
+            iterator(SlotIterator.builder().startPosition(0).type(SlotIterator.SlotIteratorType.HORIZONTAL).build())
+        }
+
+        val sortBy = contents.getProperty<ChestShopSortBy>("chestshop_sort_by", ChestShopSortBy.BUY_AND_SELL_PRICE)
+        chestShops = when (sortBy) {
+            ChestShopSortBy.BUY_AND_SELL_PRICE -> chestShops.sortedWith(compareBy<ChestShop, BigDecimal?>(nullsLast()) { it.buyPrice}.thenBy { it.sellPrice })
+            ChestShopSortBy.BUY_PRICE -> chestShops.sortedWith(compareBy(nullsLast()) { it.buyPrice })
+            ChestShopSortBy.SELL_PRICE -> chestShops.sortedWith(compareBy(nullsLast()) { it.sellPrice })
+            ChestShopSortBy.CREATOR -> chestShops.sortedWith(compareBy(nullsLast()) { it.creatorName })
+        }
 
         val searchInput = contents.getProperty<String>("chestshop_search_input")
         if (searchInput != null) {
@@ -64,53 +78,61 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
 
         val hasTeleportPermission = player.hasPermission("betterchestshops.teleport")
 
-        chestShops.forEach { chestShop ->
+        val lastItemOfPage = pagination.itemsPerPage * pagination.page()
+        val firstItemOfPage = lastItemOfPage - pagination.itemsPerPage
+
+        chestShops.forEachIndexed { index, chestShop ->
             with(chestShop) {
-                if (this.itemStack == null) return@forEach
+                if (this.itemStack == null) return@forEachIndexed
+                val buildItem = index in firstItemOfPage..lastItemOfPage
 
                 val icon = runCatching { Material.valueOf(containerType.name) }.getOrNull() ?: Material.BARRIER
-
-                val loreLine1 = if (buyPrice != null && sellPrice != null) {
-                    "<white>Buy/Sell Price: <yellow>${Utils.formatPrice(buyPrice)}/${Utils.formatPrice(sellPrice)} Coin(s)"
-                } else if (buyPrice != null) {
-                    "<white>Sell Price: <yellow>${Utils.formatPrice(buyPrice)} Coin(s)"
-                } else if (sellPrice != null) {
-                    "<white>Buy Price: <yellow>${Utils.formatPrice(sellPrice)} Coin(s)"
-                } else {
-                    "<red>Invalid ChestShop!"
-                }
-
-                val chestShopItemLore = itemStack.lore() ?: none
-
-                val chestShopItemEnchants = Utils.getEnchantAsString(itemStack, withLevel = true)
-                val chestShopItemEnchantsComponent = if (chestShopItemEnchants.isNotEmpty()) {
-                    chestShopItemEnchants.map { enchant ->
-                        val ecData = enchant.split("|")
-                        "   <yellow>- ${ecData[0]} <gold>[${ecData[1]}]".parse()
-                    }
-                } else {
-                    none
-                }
-
-                val mutableLore = mutableListOf(
-                    loreLine1.parse(),
-                    "<white>Item Type: <yellow>${friendlyItemTypeName} <gray>(x$amount)".parse(),
-                    loreHeader
-                ).apply {
-                    addAll(chestShopItemLore)
-                    add(enchantsHeader)
-                    addAll(chestShopItemEnchantsComponent)
-                    if (hasTeleportPermission) {
-                        addAll(clickToTeleport)
-                    }
-                }
-
-                // Setting the lore takes the most time in this process
                 val item = ItemStack(icon)
-                    .meta {
+
+                if (buildItem) {
+                    val loreLine1 = if (buyPriceFormatted != null && sellPriceFormatted != null) {
+                        "<white>Buy/Sell Price: <yellow>$buyPriceFormatted/$sellPriceFormatted Coin(s)"
+                    } else if (sellPriceFormatted != null) {
+                        "<white>Sell Price: <yellow>$sellPriceFormatted Coin(s)"
+                    } else if (buyPriceFormatted != null) {
+                        "<white>Buy Price: <yellow>$buyPriceFormatted Coin(s)"
+                    } else {
+                        "<red>Invalid ChestShop!"
+                    }
+                    val loreLine2 = "<white>Owner: <yellow>${creatorName ?: creatorUUID}"
+
+                    val chestShopItemLore = itemStack.lore() ?: none
+
+                    val chestShopItemEnchants = Utils.getEnchantAsString(itemStack, withLevel = true)
+                    val chestShopItemEnchantsComponent = if (chestShopItemEnchants.isNotEmpty()) {
+                        chestShopItemEnchants.map { enchant ->
+                            val ecData = enchant.split("|")
+                            "   <yellow>- ${ecData[0]} <gold>[${ecData[1]}]".parse()
+                        }
+                    } else {
+                        none
+                    }
+
+                    val mutableLore = mutableListOf(
+                        loreLine1.parse(),
+                        loreLine2.parse(),
+                        "<white>Item Type: <yellow>${friendlyItemTypeName} <gray>(x$amount)".parse(),
+                        loreHeader
+                    ).apply {
+                        addAll(chestShopItemLore)
+                        add(enchantsHeader)
+                        addAll(chestShopItemEnchantsComponent)
+                        if (hasTeleportPermission) {
+                            addAll(clickToTeleport)
+                        }
+                    }
+
+                    // Setting the lore takes the most time in this process
+                    item.meta {
                         displayName(signLocation.toFormattedString().toComponent())
                         lore(mutableLore)
                     }
+                }
 
                 pagination.addItem(IntelligentItem.of(item) {
                     if (hasTeleportPermission) {
@@ -119,10 +141,15 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
                         } else {
                             val tpAnywayClickEvent = ClickEvent.callback({
                                 val uuid = it[Identity.UUID].getOrNull() ?: return@callback
-                                plugin.server.getPlayer(uuid)?.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
+                                plugin.server.getPlayer(uuid)
+                                    ?.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
                             }, ClickCallback.Options.builder().lifetime(Duration.ofMinutes(1L)).build())
-                            val teleportIsUnsafeMessage = "Teleport location is unsafe!".toComponent(NamedTextColor.RED).append(Component.space())
-                                .append("[Click here to teleport anyway]".toComponent(NamedTextColor.DARK_RED).clickEvent(tpAnywayClickEvent))
+                            val teleportIsUnsafeMessage =
+                                "Teleport location is unsafe!".toComponent(NamedTextColor.RED).append(Component.space())
+                                    .append(
+                                        "[Click here to teleport anyway]".toComponent(NamedTextColor.DARK_RED)
+                                            .clickEvent(tpAnywayClickEvent)
+                                    )
                             player.sendMessage(teleportIsUnsafeMessage)
                         }
                     }
@@ -130,17 +157,31 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
             }
         }
 
-
-        pagination.itemsPerPage = 45
-        pagination.iterator(SlotIterator.builder().startPosition(0).type(SlotIterator.SlotIteratorType.HORIZONTAL).build())
-
-        contents[45] = IntelligentItem.of(Constants.previousPageButton.name("<yellow>⇽ <gold>Previous Page".parse())) {
+        contents[45] = IntelligentItem.of(Constants.previousPageButton.richName("<yellow>⇽ <gold>Previous Page")) {
             if (!pagination.isFirst) {
                 inventory.open(player, pagination.previous().page())
             }
         }
 
-        contents[46] = IntelligentItem.of(ItemStack(Material.COMPASS).name("Search ChestShop")) {
+        contents[47] = IntelligentItem.of(
+            ItemStack(Material.HOPPER).richName("<gold>Sort")
+                .richLore("<gray>Click to sort the chestshops in a specific order")
+                .richLore("<gray>Currently sorted by: <yellow>$sortBy")
+        ) {
+            contents.setProperty("chestshop_sort_by", sortBy.next())
+            contents.reload()
+            val contentPlaceholders = mapOf(
+                "page" to pagination.page(),
+                "maxpage" to pagination.lastPage()
+            )
+            contents.updateTitle("<red>ChestShops <yellow>(<page>/<maxpage>)".parse(contentPlaceholders))
+        }
+
+        contents[49] = IntelligentItem.of(ItemStack(Material.IRON_DOOR).richName("<red>Close")) {
+            inventory.close(player)
+        }
+
+        contents[51] = IntelligentItem.of(ItemStack(Material.COMPASS).richName("<gold>Search ChestShop")) {
             inventory.close(player)
             val playerChatInputBuilder = Utils.createChatInputBuilderBase(plugin, player)
                 .isValidInput { _, input -> input.isNotEmpty() }
@@ -150,16 +191,14 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
                 }
             val playerChatInput = playerChatInputBuilder.build()
             playerChatInput.start()
-            val title = Title.title("<red><bold>Search ChestShop".parse(), "<red>Search by player, item or container type!".parse(),
-                Title.Times.times(Ticks.duration(10), Duration.ofSeconds(6000), Ticks.duration(20)))
+            val title = Title.title(
+                "<red><bold>Search ChestShop".parse(), "<red>Search by player, item or container type!".parse(),
+                Title.Times.times(Ticks.duration(10), Duration.ofSeconds(6000), Ticks.duration(20))
+            )
             player.showTitle(title)
         }
 
-        contents[49] = IntelligentItem.of(ItemStack(Material.IRON_DOOR).name("<red>Close".parse())) {
-            inventory.close(player)
-        }
-
-        contents[53] = IntelligentItem.of(Constants.nextPageButton.name("<gold>Next Page <yellow>⇾".parse())) {
+        contents[53] = IntelligentItem.of(Constants.nextPageButton.richName("<gold>Next Page <yellow>⇾")) {
             if (!pagination.isLast) {
                 inventory.open(player, pagination.next().page())
             }

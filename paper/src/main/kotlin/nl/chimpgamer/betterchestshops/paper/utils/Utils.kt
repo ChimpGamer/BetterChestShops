@@ -34,7 +34,8 @@ object Utils {
         return enchantsStringList
     }
 
-    fun formatPrice(price: BigDecimal): String {
+    fun formatPrice(price: BigDecimal?): String? {
+        if (price == null) return null
         val decimalFormat = DecimalFormat.getIntegerInstance()
         decimalFormat.maximumFractionDigits = -1
         decimalFormat.isGroupingUsed = false
