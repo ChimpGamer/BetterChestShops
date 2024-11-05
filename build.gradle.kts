@@ -4,7 +4,7 @@ val exposedVersion = "0.52.0"
 
 plugins {
     kotlin("jvm") version "1.9.24"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 allprojects {
@@ -19,7 +19,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin("com.github.johnrengelman.shadow")
+        plugin("com.gradleup.shadow")
     }
 
     repositories {
