@@ -17,7 +17,7 @@ dependencies {
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.19.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.19.0") { isTransitive = false }
 
-    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13")
+    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.14")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 }
