@@ -38,7 +38,7 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-java-time:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.xerial:sqlite-jdbc:3.47.0.0")
+        compileOnly("org.xerial:sqlite-jdbc:3.47.1.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
         compileOnly("com.zaxxer:HikariCP:6.0.0")
