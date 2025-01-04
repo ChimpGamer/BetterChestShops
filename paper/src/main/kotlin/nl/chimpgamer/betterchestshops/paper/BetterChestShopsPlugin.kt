@@ -193,18 +193,19 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
     }
 
     fun getChestShopLimit(player: Player): Int {
-        if (player.hasPermission("betterchestshops.shoplimit.*")) {
+        val prefix = "betterchestshops.shoplimit."
+        if (player.hasPermission("$prefix*")) {
             return -1
         }
         val limits: MutableSet<Int> = HashSet()
         for (permissionAttachmentInfo in player.effectivePermissions) {
             val permission = permissionAttachmentInfo.permission
             if (permission.startsWith(
-                    "betterchestshops.shoplimit.",
+                    prefix,
                     ignoreCase = true
                 ) && permissionAttachmentInfo.value
             ) {
-                val amount = permission.replace("betterchestshops.shoplimit.", "")
+                val amount = permission.replace(prefix, "")
                 limits.add(amount.toIntOrNull() ?: 0)
             }
         }

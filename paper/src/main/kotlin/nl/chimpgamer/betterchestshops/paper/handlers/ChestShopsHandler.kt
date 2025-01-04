@@ -5,6 +5,7 @@ import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import nl.chimpgamer.betterchestshops.paper.storage.entities.ChestShopEntity
 import nl.chimpgamer.betterchestshops.paper.storage.entities.toChestShop
+import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
@@ -113,9 +114,20 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         return count
     }
 
+    fun getChestShopCount() = chestShops.count()
+
     fun getChestShops(): Collection<ChestShop> = chestShops.values
 
     fun getChestShopsUnordered() = chestShops.values.toSet()
+
+    /**
+     * Get the chest shops by the give chunk.
+     * Checks if the world and chunk is loaded and if the chuck matches the given chunk
+     *
+     * @param chunk The chunk you want to get the chest shops from.
+     * @return A set with all the chest shops in the given chunk.
+     */
+    fun getChestShopsByChunk(chunk: Chunk) = chestShops.filterKeys { it.isWorldLoaded && it.isChunkLoaded && it.chunk == chunk }.values.toSet()
 
     fun getChestShops(predicate: (ChestShop) -> Boolean) = chestShops.values.filter(predicate)
 }

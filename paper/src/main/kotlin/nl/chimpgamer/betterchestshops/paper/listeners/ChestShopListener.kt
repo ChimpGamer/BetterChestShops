@@ -10,6 +10,7 @@ import com.Acrobot.ChestShop.Utils.uBlock
 import com.github.shynixn.mccoroutine.folia.ticks
 import kotlinx.coroutines.delay
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Container
@@ -167,16 +168,10 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    suspend fun onChunkLoad(event: ChunkLoadEvent) {
+    fun onChunkLoad(event: ChunkLoadEvent) {
         if (event.isNewChunk) return
         // Load chestshop items if there are chestshops in this chunk.
 
-        plugin.chestShopsHandler.getChestShops().forEach { chestShop ->
-            // Check if world is loaded and check if the chunk is loaded.
-            val location = chestShop.signLocation
-            if (location.isWorldLoaded && location.isChunkLoaded && location.chunk == event.chunk) {
-                chestShop.spawnItem()
-            }
-        }
+        plugin.chestShopsHandler.getChestShopsByChunk(event.chunk).forEach(ChestShop::spawnItem)
     }
 }

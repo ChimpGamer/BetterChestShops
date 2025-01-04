@@ -1,7 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
-import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
@@ -40,7 +39,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
                 sender.sendRichMessage("    <gold>BetterChestShops<br>" +
                         "<gray>Version > <yellow>${plugin.version}<br>" +
                         "<gray>HologramHandler > <yellow>${plugin.hologramManager.hologramHandler.name}<br>" +
-                        "<gray>ChestShops Registered > <yellow>${plugin.chestShopsHandler.getChestShops().size}"
+                        "<gray>ChestShops Registered > <yellow>${plugin.chestShopsHandler.getChestShopCount()}"
                 )
             }
         )
@@ -60,12 +59,10 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
         commandManager.command(builder
             .literal("clearinvalid")
             .permission("$basePermission.clearinvalid")
-            .suspendingHandler { context ->
+            .suspendingHandler(context = plugin.bootstrap.globalRegionDispatcher) { context ->
                 val sender = context.sender()
 
-                val toRemove = withContext(plugin.bootstrap.globalRegionDispatcher) {
-                    plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
-                }
+                val toRemove = plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
 
                 val count = plugin.chestShopsHandler.removeChestShops(toRemove)
                 sender.sendRichMessage("<gold>You have deleted <yellow>${count.get()} <gold>invalid chestshops!")
