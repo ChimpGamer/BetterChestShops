@@ -22,18 +22,6 @@ subprojects {
         plugin("com.gradleup.shadow")
     }
 
-    repositories {
-        maven("https://repo.minebench.de") // ChestShop Repository
-
-        maven("https://repo.codemc.io/repository/maven-public/") // HolographicDisplays, BentoBox Repository
-
-        maven("https://jitpack.io") // DecentHolograms Repository
-
-        maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
-
-        maven("https://repo.fancyplugins.de/releases") // FancyHolograms Repository
-    }
-
     dependencies {
         compileOnly(kotlin("stdlib"))
 
@@ -54,12 +42,6 @@ subprojects {
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
         compileOnly("com.zaxxer:HikariCP:6.0.0")
-
-        compileOnly("com.acrobot.chestshop:chestshop:3.12.2")
-        compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
-        compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
-        compileOnly("world.bentobox:bentobox:2.0.0-SNAPSHOT")
-        compileOnly("de.oliver:FancyHolograms:2.3.3")
 
         compileOnly(fileTree("../libs"))
     }
