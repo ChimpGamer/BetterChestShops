@@ -38,6 +38,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
 
     fun getAllByCreator(creator: UUID) = chestShops.values.filter { it.creatorUUID == creator }.toList()
 
+    fun getCountByCreator(creator: UUID) = chestShops.filterValues { it.creatorUUID == creator }.count()
+
     suspend fun addChestShop(
         creator: UUID,
         containerType: ContainerType,

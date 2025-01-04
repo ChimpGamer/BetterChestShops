@@ -183,7 +183,7 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         if (chestShopLimit == -1) return false
         if (chestShopLimit == 0) return true
         if (chestShopLimit > 0) {
-            val chestShops = chestShopsHandler.getAllByCreator(player.uniqueId).count()
+            val chestShops = chestShopsHandler.getCountByCreator(player.uniqueId)
             if (chestShops >= chestShopLimit) {
                 player.sendRichMessage("<red>You've reached the maximum limit of <yellow>$chestShops <red>chestshops!")
                 return true
