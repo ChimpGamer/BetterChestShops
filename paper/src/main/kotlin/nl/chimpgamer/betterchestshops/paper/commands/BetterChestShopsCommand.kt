@@ -38,6 +38,8 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
                 val sender = context.sender()
                 sender.sendRichMessage("    <gold>BetterChestShops<br>" +
                         "<gray>Version > <yellow>${plugin.version}<br>" +
+                        "<gray>Build Number > <yellow>${plugin.buildNumber}<br>" +
+                        "<gray>Build Date > <yellow>${plugin.buildDate}<br>" +
                         "<gray>HologramHandler > <yellow>${plugin.hologramManager.hologramHandler.name}<br>" +
                         "<gray>ChestShops Registered > <yellow>${plugin.chestShopsHandler.getChestShopCount()}"
                 )

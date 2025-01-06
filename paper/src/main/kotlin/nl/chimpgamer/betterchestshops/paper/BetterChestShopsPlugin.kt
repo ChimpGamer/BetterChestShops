@@ -18,6 +18,7 @@ import nl.chimpgamer.betterchestshops.paper.listeners.BentoBoxListener
 import nl.chimpgamer.betterchestshops.paper.listeners.ChestShopListener
 import nl.chimpgamer.betterchestshops.paper.managers.HologramManager
 import nl.chimpgamer.betterchestshops.paper.tasks.ChestShopIconTask
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
@@ -50,6 +51,9 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
     private val hookManager = HookManager(this)
 
+    var buildNumber: String = ""
+    var buildDate: String = ""
+
     fun load() {
         instance = this
         // Make sure that the BetterChestShops folder exists.
@@ -61,6 +65,8 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         } catch (ex: IOException) {
             logger.log(Level.SEVERE, "Unable to create plugin directory", ex)
         }
+
+        loadPluginInfo()
     }
 
     fun enable() {
@@ -210,6 +216,16 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
             }
         }
         return limits.maxByOrNull { it } ?: 0
+    }
+
+    private fun loadPluginInfo() {
+        getResource("paper-plugin.yml")?.let {
+            it.reader().use { reader ->
+                val pluginYml = YamlConfiguration.loadConfiguration(reader)
+                buildNumber = pluginYml.getString("build-number") ?: ""
+                buildDate = pluginYml.getString("build-date") ?: ""
+            }
+        }
     }
 
     companion object {
