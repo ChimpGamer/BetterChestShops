@@ -2,6 +2,7 @@ package nl.chimpgamer.betterchestshops.paper.holograms
 
 import com.Zrips.CMI.CMI
 import com.Zrips.CMI.Modules.Holograms.CMIHologram
+import net.Zrips.CMILib.Container.CMILocation
 import net.Zrips.CMILib.Items.CMIItemStack
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
@@ -26,7 +27,7 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
         // Barrels are higher then chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
-        val hologram = CMIHologram(UUID.randomUUID().toString(), displayLocation)
+        val hologram = CMIHologram(UUID.randomUUID().toString(), CMILocation(displayLocation))
 
         val enchanted = itemStack.enchantments.isNotEmpty()
 
