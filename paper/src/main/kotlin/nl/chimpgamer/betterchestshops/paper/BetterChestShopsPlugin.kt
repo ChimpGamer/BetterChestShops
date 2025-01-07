@@ -177,10 +177,12 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
     fun debug(message: () -> Any) {
         if (!settingsConfig.debug) return
-        if (message is Component) {
-            bootstrap.componentLogger.info(message)
-        } else {
-            logger.info(message.toString())
+        message().run {
+            if (this is Component) {
+                bootstrap.componentLogger.info(this)
+            } else {
+                logger.info(this.toString())
+            }
         }
     }
 
