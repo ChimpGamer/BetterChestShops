@@ -28,6 +28,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         val loadedChestShops = HashMap<Location, ChestShop>()
         transaction {
             val betterChestShops = BetterChestShopEntity.all()
+            plugin.logger.info("Found ${betterChestShops.count()} better chestshops in the database!")
             if (betterChestShops.empty()) {
                 plugin.dataFolder.resolve("data.db").copyTo(plugin.dataFolder.resolve("data.db.backup"), overwrite = true)
                 val newChestShops = HashSet<BetterChestShopEntity>()
@@ -55,7 +56,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
                     SchemaUtils.drop(ChestShopsTable)
                 }
             } else {
-                loadedChestShops.putAll(BetterChestShopEntity.all().map { it.toChestShop() }
+                loadedChestShops.putAll(betterChestShops.map { it.toChestShop() }
                     .filter { runCatching { it.signLocation }.isSuccess } // If World is valid then cache it.
                     .map { it.signLocation to it })
             }
@@ -99,7 +100,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
                 this.creatorUUID = creator
                 this.containerType = containerType
                 this.amount = amount
-                this.signLocation = this.signLocation
+                this.signLocation = signLocation
                 this.itemStack = itemStack
                 this.buyPrice = buyPrice
                 this.sellPrice = sellPrice

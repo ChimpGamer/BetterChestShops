@@ -26,7 +26,7 @@ class ChestShop(
     val sellPrice: BigDecimal?,
     val created: LocalDateTime
 ) {
-    val isChunkLoaded: Boolean get() = signLocation.block.world.isChunkLoaded(signLocation.blockX shr 4, signLocation.blockZ shr 4)
+    val isChunkLoaded: Boolean get() = signLocation.isChunkLoaded
 
     val isValid: Boolean get() = ChestShopSign.isValid(signLocation.block)
 
