@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 import java.util.*
 
-val exposedVersion = "0.57.0"
+val exposedVersion = "0.59.0"
 
 plugins {
     kotlin("jvm") version "2.1.10"
