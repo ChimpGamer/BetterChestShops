@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
-import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
+import nl.chimpgamer.betterchestshops.paper.storage.tables.BetterChestShopsTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -88,7 +88,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         connect()
         if (isDatabaseInitialized) {
             transaction {
-                SchemaUtils.create(ChestShopsTable)
+                SchemaUtils.create(BetterChestShopsTable)
             }
         }
     }

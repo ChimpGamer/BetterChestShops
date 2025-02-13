@@ -9,7 +9,9 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.Acrobot.ChestShop.Utils.uBlock
 import com.github.shynixn.mccoroutine.folia.ticks
 import kotlinx.coroutines.delay
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.extensions.parse
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import org.bukkit.block.BlockFace
@@ -56,14 +58,14 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
 
             if (uuid == null) {
                 event.sign.block.breakNaturally()
-                player.sendRichMessage("<red>Something went wrong while creating your shop.")
+                player.sendRichMessage(plugin.messagesConfig.shopCreateError)
                 plugin.logger.warning("NULL uuid ShopCreatedEvent for player: `$playerName`")
                 return
             }
             val container = event.container
             if (container == null) {
                 event.sign.block.breakNaturally()
-                player.sendRichMessage("<red>Something went wrong while creating your shop.")
+                player.sendRichMessage(plugin.messagesConfig.shopCreateError)
                 plugin.logger.warning("NULL container ShopCreatedEvent for player: `$playerName`")
                 return
             }
@@ -71,9 +73,10 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
             val containerType = try {
                 ContainerType.valueOf(container.type.toString().uppercase())
             } catch (ex: IllegalArgumentException) {
-                player.sendRichMessage(
-                    "<red>Unknown container type. Use one of the following container types: " + ContainerType.entries
-                        .joinToString()
+                player.sendMessage(
+                    plugin.messagesConfig.shopCreateUnknownContainerTypes.parse(
+                        Placeholder.parsed("container_types", ContainerType.entries.joinToString())
+                    )
                 )
                 return
             }

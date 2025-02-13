@@ -2,6 +2,7 @@ package nl.chimpgamer.betterchestshops.paper.storage.entities
 
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
+import nl.chimpgamer.betterchestshops.paper.utils.LocationUtils
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -21,9 +22,7 @@ class ChestShopEntity(id: EntityID<Int>) : IntEntity(id) {
     var buyPrice by ChestShopsTable.buyPrice
     var sellPrice by ChestShopsTable.sellPrice
     var created by ChestShopsTable.created
-
-
 }
 
-fun ChestShopEntity.toChestShop() = ChestShop(id.value, creatorUUID, containerType, amount, world, x,y,z,
+fun ChestShopEntity.toChestShop() = ChestShop(id.value, creatorUUID, containerType, amount, LocationUtils.buildBlockLocation(world, x, y, z),
     if (itemStack == null) null else ItemStack.deserializeBytes(itemStack!!.bytes), buyPrice, sellPrice, created)

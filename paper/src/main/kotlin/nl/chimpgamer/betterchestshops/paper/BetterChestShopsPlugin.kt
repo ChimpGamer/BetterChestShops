@@ -8,9 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.betterchestshops.paper.commands.CloudCommandManager
 import nl.chimpgamer.betterchestshops.paper.configurations.MessagesConfig
 import nl.chimpgamer.betterchestshops.paper.configurations.SettingsConfig
+import nl.chimpgamer.betterchestshops.paper.extensions.parse
 import nl.chimpgamer.betterchestshops.paper.handlers.ChestShopsHandler
 import nl.chimpgamer.betterchestshops.paper.handlers.DatabaseHandler
 import nl.chimpgamer.betterchestshops.paper.hooks.HookManager
@@ -193,7 +195,9 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
         if (chestShopLimit > 0) {
             val chestShops = chestShopsHandler.getCountByCreator(player.uniqueId)
             if (chestShops >= chestShopLimit) {
-                player.sendRichMessage("<red>You've reached the maximum limit of <yellow>$chestShops <red>chestshops!")
+                player.sendMessage(
+                    messagesConfig.maximumLimitReached.parse(Placeholder.unparsed("limit", chestShopLimit.toString()))
+                )
                 return true
             }
         }

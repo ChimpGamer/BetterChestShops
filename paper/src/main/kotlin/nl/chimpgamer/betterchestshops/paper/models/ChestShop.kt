@@ -4,9 +4,9 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.Acrobot.ChestShop.Utils.uBlock
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.capitalizeWords
-import nl.chimpgamer.betterchestshops.paper.utils.LocationUtils
 import nl.chimpgamer.betterchestshops.paper.utils.Utils
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Container
 import org.bukkit.block.Sign
@@ -20,18 +20,12 @@ class ChestShop(
     val creatorUUID: UUID,
     val containerType: ContainerType,
     val amount: Int,
-    val world: String,
-    val x: Int,
-    val y: Int,
-    val z: Int,
+    val signLocation: Location,
     val itemStack: ItemStack?,
     val buyPrice: BigDecimal?,
     val sellPrice: BigDecimal?,
     val created: LocalDateTime
 ) {
-
-    val signLocation = LocationUtils.buildBlockLocation(world, x, y, z)
-
     val isChunkLoaded: Boolean get() = signLocation.block.world.isChunkLoaded(signLocation.blockX shr 4, signLocation.blockZ shr 4)
 
     val isValid: Boolean get() = ChestShopSign.isValid(signLocation.block)
@@ -51,8 +45,8 @@ class ChestShop(
 
     val friendlyItemTypeName = (itemStack?.type?.name ?: "Nothing").lowercase().capitalizeWords()
 
-    val buyPriceFormatted = Utils.formatPrice(buyPrice)
-    val sellPriceFormatted = Utils.formatPrice(sellPrice)
+    val buyPriceFormatted by lazy { Utils.formatPrice(buyPrice) }
+    val sellPriceFormatted by lazy { Utils.formatPrice(sellPrice) }
 
     fun spawnItem() {
         val container = this.container ?: return
@@ -61,7 +55,7 @@ class ChestShop(
 
         val hologramHandler = BetterChestShopsPlugin.instance.hologramManager.hologramHandler
         hologramHandler.destroyItem(container.location)
-        if (!blockAboveContainer.type.isAir) return
+        if (!blockAboveContainer.isEmpty || !blockAboveContainer.type.isAir) return
         val itemStack = this.itemStack ?: return
         if (itemStack.type.isAir || itemStack.amount < 1) return
 

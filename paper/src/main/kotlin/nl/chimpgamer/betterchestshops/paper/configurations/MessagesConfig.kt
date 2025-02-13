@@ -13,6 +13,11 @@ class MessagesConfig(plugin: BetterChestShopsPlugin) {
 
     val noPermission: String get() = config.getString("noPermission")
 
+    val maximumLimitReached: String get() = config.getString("shop.create.maximum-limit-reached")
+
+    val shopCreateError: String get() = config.getString("shop.create.error")
+    val shopCreateUnknownContainerTypes: String get() = config.getString("shop.create.unknown-container-types")
+
     init {
         val file = plugin.dataFolder.resolve("messages.yml")
         val inputStream = plugin.getResource("messages.yml")

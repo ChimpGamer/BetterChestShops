@@ -8,6 +8,8 @@ import io.github.rysefoxx.inventory.plugin.other.EventCreator
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
 import io.github.rysefoxx.inventory.plugin.pagination.SlotIterator
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.util.Ticks
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
@@ -65,7 +67,10 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
             with(chestShop) {
                 if (this.itemStack == null) return@forEach
 
-                val icon = runCatching { Material.valueOf(containerType.name) }.getOrNull() ?: Material.BARRIER
+                val tagResolver = TagResolver.resolver(
+                    Placeholder.component("item_display_name", itemStack.displayName()),
+                    Placeholder.unparsed("item_friendly_type", friendlyItemTypeName),
+                )
 
                 val loreLine1 = if (buyPriceFormatted != null && sellPriceFormatted != null) {
                     "<white>Buy/Sell Price: <yellow>$buyPriceFormatted/$sellPriceFormatted Coin(s)"
@@ -91,7 +96,8 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
 
                 val mutableLore = mutableListOf(
                     loreLine1.parse(),
-                    "<white>Item Type: <yellow>${friendlyItemTypeName} <gray>(x$amount)".parse(),
+                    "<white>Item Type: <yellow><item_friendly_type> <gray>(x$amount)".parse(tagResolver),
+                    "<white>Display Name: <yellow><item_display_name>".parse(tagResolver),
                     loreHeader
                 ).apply {
                     addAll(chestShopItemLore)
@@ -103,7 +109,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
                 }
 
                 // Setting the lore takes the most time in this process
-                val item = ItemStack(icon)
+                val item = ItemStack(containerType.material)
                     .meta {
                         displayName(signLocation.toFormattedString().parse())
                         lore(mutableLore)

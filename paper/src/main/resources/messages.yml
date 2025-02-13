@@ -1,3 +1,9 @@
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 1
+shop:
+  create:
+    error: '<red>Something went wrong while creating your shop.'
+    maximum-limit-reached: '<red>You''ve reached the maximum limit of <yellow><limit> <red>chestshops!'
+    unknown-container-type: '<red>Unknown container type. Use one of the following container types: <container_types>'
+
+config-version: 2

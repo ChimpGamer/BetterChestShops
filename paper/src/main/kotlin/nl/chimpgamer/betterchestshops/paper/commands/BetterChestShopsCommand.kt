@@ -1,6 +1,10 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
+import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.regionDispatcher
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
@@ -9,6 +13,7 @@ import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.parser.flag.CommandFlag
 import org.incendo.cloud.parser.standard.EnumParser.enumParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 
@@ -58,13 +63,30 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
             }
         )
 
+        val aggressive = CommandFlag.builder<CommandSender>("aggressive").build()
         commandManager.command(builder
             .literal("clearinvalid")
             .permission("$basePermission.clearinvalid")
-            .suspendingHandler(context = plugin.bootstrap.globalRegionDispatcher) { context ->
+            .flag(aggressive)
+            .suspendingHandler(context = plugin.bootstrap.asyncDispatcher) { context ->
                 val sender = context.sender()
+                val isAggressive = context.flags().hasFlag(aggressive)
 
-                val toRemove = plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
+                val toRemove = if (isAggressive) {
+                    plugin.chestShopsHandler.getChestShopsUnordered().filter { chestShop ->
+                        val world = chestShop.signLocation.world
+                        world.getChunkAtAsync(chestShop.signLocation).await()
+                        withContext(plugin.bootstrap.regionDispatcher(chestShop.signLocation)) {
+                            !chestShop.isValid
+                        }
+                    }.toSet()
+                } else {
+                    withContext(plugin.bootstrap.globalRegionDispatcher) {
+                        plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
+                    }
+                }
+
+                //val toRemove = plugin.chestShopsHandler.getChestShops { it.isChunkLoaded && !it.isValid }.toSet()
 
                 val count = plugin.chestShopsHandler.removeChestShops(toRemove)
                 sender.sendRichMessage("<gold>You have deleted <yellow>${count.get()} <gold>invalid chestshops!")
