@@ -143,22 +143,28 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
 
                 pagination.addItem(IntelligentItem.of(item) {
                     if (hasTeleportPermission) {
-                        if (chestShop.signLocation.isSafe()) {
-                            player.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                        } else {
-                            val tpAnywayClickEvent = ClickEvent.callback({
-                                val uuid = it[Identity.UUID].getOrNull() ?: return@callback
-                                plugin.server.getPlayer(uuid)
-                                    ?.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                            }, ClickCallback.Options.builder().lifetime(Duration.ofMinutes(1L)).build())
-                            val teleportIsUnsafeMessage =
-                                "Teleport location is unsafe!".toComponent(NamedTextColor.RED).append(Component.space())
-                                    .append(
-                                        "[Click here to teleport anyway]".toComponent(NamedTextColor.DARK_RED)
-                                            .clickEvent(tpAnywayClickEvent)
-                                    )
-                            player.sendMessage(teleportIsUnsafeMessage)
+                        var location = chestShop.signLocation
+                        if (!location.isSafe()) {
+                            val l = chestShop.signLocation.clone().subtract(0.0, 1.0, 0.0)
+                            if (l.isSafe()) {
+                                location = l
+                            } else {
+                                val tpAnywayClickEvent = ClickEvent.callback({
+                                    val uuid = it[Identity.UUID].getOrNull() ?: return@callback
+                                    plugin.server.getPlayer(uuid)
+                                        ?.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
+                                }, ClickCallback.Options.builder().lifetime(Duration.ofMinutes(1L)).build())
+                                val teleportIsUnsafeMessage =
+                                    "Teleport location is unsafe!".toComponent(NamedTextColor.RED).append(Component.space())
+                                        .append(
+                                            "[Click here to teleport anyway]".toComponent(NamedTextColor.DARK_RED)
+                                                .clickEvent(tpAnywayClickEvent)
+                                        )
+                                player.sendMessage(teleportIsUnsafeMessage)
+                                return@of
+                            }
                         }
+                        player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN)
                     }
                 })
             }

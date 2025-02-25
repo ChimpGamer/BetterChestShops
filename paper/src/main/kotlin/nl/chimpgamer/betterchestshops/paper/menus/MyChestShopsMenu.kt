@@ -117,11 +117,17 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
 
                 pagination.addItem(IntelligentItem.of(item) {
                     if (hasTeleportPermission) {
-                        if (chestShop.signLocation.isSafe()) {
-                            player.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                        } else {
-                            player.sendRichMessage("<red>Teleport location is unsafe!")
+                        var location = chestShop.signLocation
+                        if (!location.isSafe()) {
+                            val l = chestShop.signLocation.clone().subtract(0.0, 1.0, 0.0)
+                            if (l.isSafe()) {
+                                location = l
+                            } else {
+                                player.sendRichMessage("<red>Teleport location is unsafe!")
+                                return@of
+                            }
                         }
+                        player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN)
                     }
                 })
             }
