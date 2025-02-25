@@ -10,16 +10,20 @@ import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.io.path.*
 
 class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
     private lateinit var database: Database
+    private val databaseFile = plugin.dataFolder.resolve("data.db")
+    private val backupsPath = plugin.dataFolder.resolve("backups").toPath()
 
     val isDatabaseInitialized: Boolean get() = this::database.isInitialized
 
     val databaseDispatcher get() = plugin.bootstrap.asyncDispatcher
 
     private fun connect() {
-        val databaseFile = plugin.dataFolder.resolve("data.db")
         val settings = plugin.settingsConfig
         val storageType = settings.storageType.lowercase()
 
@@ -94,4 +98,22 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
     }
 
     fun close() = TransactionManager.closeAndUnregister(database)
+
+    fun backupSQLiteDatabase() {
+        if (plugin.settingsConfig.storageType.lowercase() != "sqlite") return
+        val fileName = "data-${Instant.now().toEpochMilli()}.db"
+        if (!backupsPath.isDirectory()) {
+            backupsPath.createDirectory();
+        }
+        databaseFile.toPath().copyTo(backupsPath.resolve(fileName))
+    }
+
+    fun cleanupBackups() {
+        if (plugin.settingsConfig.storageType.lowercase() != "sqlite") return
+        if (!backupsPath.isDirectory()) return
+        val sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+
+        backupsPath.filter { path -> path.isRegularFile() && path.getLastModifiedTime().toInstant().isBefore(sevenDaysAgo) }
+            .forEach { path -> path.deleteIfExists() }
+    }
 }

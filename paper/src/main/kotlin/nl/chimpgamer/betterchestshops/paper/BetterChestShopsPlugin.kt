@@ -128,7 +128,7 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
 
         if (pluginManager.isPluginEnabled("BentoBox")) {
-            pluginManager.registerSuspendingEvents(BentoBoxListener(this), this.bootstrap, mapOf(
+            pluginManager.registerSuspendingEvents(BentoBoxListener(this), bootstrap, mapOf(
                 Pair(MCCoroutineExceptionEvent::class.java) {
                     require(it is MCCoroutineExceptionEvent)
                     bootstrap.globalRegionDispatcher
@@ -146,14 +146,18 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
                 delay(settingsConfig.hologramRefreshInterval.seconds)
             }
         }
+
+        databaseHandler.cleanupBackups()
     }
 
     fun disable() {
         hookManager.unload()
         HandlerList.unregisterAll(bootstrap)
-        server.scheduler.cancelTasks(this.bootstrap)
+        server.scheduler.cancelTasks(bootstrap)
         if (databaseHandler.isDatabaseInitialized) {
             databaseHandler.close()
+
+            databaseHandler.backupSQLiteDatabase()
         }
     }
 
