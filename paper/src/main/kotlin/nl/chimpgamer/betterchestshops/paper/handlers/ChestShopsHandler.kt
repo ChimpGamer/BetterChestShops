@@ -142,6 +142,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         return count
     }
 
+    fun getChestShop(location: Location) = chestShops[location]
+
     fun getChestShopCount() = chestShops.count()
 
     fun getChestShops(): Collection<ChestShop> = chestShops.values

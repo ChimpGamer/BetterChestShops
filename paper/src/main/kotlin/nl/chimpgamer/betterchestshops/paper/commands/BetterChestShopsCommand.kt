@@ -1,5 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
+import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.github.shynixn.mccoroutine.folia.regionDispatcher
@@ -8,6 +9,8 @@ import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
+import org.bukkit.Tag
+import org.bukkit.block.Sign
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
@@ -90,6 +93,36 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
 
                 val count = plugin.chestShopsHandler.removeChestShops(toRemove)
                 sender.sendRichMessage("<gold>You have deleted <yellow>${count.get()} <gold>invalid chestshops!")
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("check")
+            .permission("$basePermission.check")
+            .suspendingHandler(context = plugin.bootstrap.globalRegionDispatcher) { context ->
+                val sender = context.sender()
+
+                val block = sender.getTargetBlockExact(5)
+                if (block == null) {
+                    sender.sendRichMessage("<red>You're not looking at a block!")
+                    return@suspendingHandler
+                }
+                if (!Tag.ALL_SIGNS.isTagged(block.type)) {
+                    sender.sendRichMessage("<red>You're not looking at a sign!")
+                    return@suspendingHandler
+                }
+                val sign = block.state as Sign
+                if (!ChestShopSign.isValid(sign)) {
+                    sender.sendRichMessage("<red>You're not looking at a chest shop sign!")
+                    return@suspendingHandler
+                }
+                val chestShop = plugin.chestShopsHandler.getChestShop(block.location)
+                if (chestShop == null) {
+                    sender.sendRichMessage("<red>This chestshop is not registered! Recreate it to register it.")
+                    return@suspendingHandler
+                }
+                sender.sendRichMessage("<green>This chestshop is registered!")
             }
         )
     }
