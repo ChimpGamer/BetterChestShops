@@ -37,7 +37,7 @@ object Utils {
     fun formatPrice(price: BigDecimal?): String? {
         if (price == null) return null
         val decimalFormat = DecimalFormat.getIntegerInstance()
-        decimalFormat.maximumFractionDigits = -1
+        decimalFormat.maximumFractionDigits = 2
         decimalFormat.isGroupingUsed = false
         return decimalFormat.format(price)
     }
