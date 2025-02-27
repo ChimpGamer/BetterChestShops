@@ -103,7 +103,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
         if (plugin.settingsConfig.storageType.lowercase() != "sqlite") return
         val fileName = "data-${Instant.now().toEpochMilli()}.db"
         if (!backupsPath.isDirectory()) {
-            backupsPath.createDirectory();
+            backupsPath.createDirectory()
         }
         databaseFile.toPath().copyTo(backupsPath.resolve(fileName))
     }
@@ -111,7 +111,7 @@ class DatabaseHandler(private val plugin: BetterChestShopsPlugin) {
     fun cleanupBackups() {
         if (plugin.settingsConfig.storageType.lowercase() != "sqlite") return
         if (!backupsPath.isDirectory()) return
-        val sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+        val sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS)
 
         backupsPath.filter { path -> path.isRegularFile() && path.getLastModifiedTime().toInstant().isBefore(sevenDaysAgo) }
             .forEach { path -> path.deleteIfExists() }

@@ -1,16 +1,10 @@
 package nl.chimpgamer.betterchestshops.paper.commands
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
-import nl.chimpgamer.betterchestshops.paper.extensions.parse
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities
 import org.incendo.cloud.caption.CaptionProvider
 import org.incendo.cloud.caption.StandardCaptionKeys
-import org.incendo.cloud.exception.InvalidSyntaxException
-import org.incendo.cloud.exception.NoPermissionException
 import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import org.incendo.cloud.minecraft.extras.MinecraftHelp
