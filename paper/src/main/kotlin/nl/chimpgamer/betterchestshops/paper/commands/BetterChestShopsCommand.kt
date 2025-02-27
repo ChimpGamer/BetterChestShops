@@ -57,7 +57,7 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
         commandManager.command(builder
             .literal("reload")
             .permission("$basePermission.reload")
-            .handler { context ->
+            .suspendingHandler(context = plugin.bootstrap.asyncDispatcher) { context ->
                 val sender = context.sender()
                 plugin.settingsConfig.config.reload()
                 plugin.hologramManager.reload()
