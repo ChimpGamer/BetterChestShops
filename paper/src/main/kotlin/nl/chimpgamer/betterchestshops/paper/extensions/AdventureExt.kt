@@ -2,14 +2,12 @@ package nl.chimpgamer.betterchestshops.paper.extensions
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 
-private val legacyComponentSerializer = LegacyComponentSerializer.builder().character('&').hexColors().build()
+internal fun String.toComponent() = Component.text(this)
+internal fun String.toComponent(namedTextColor: NamedTextColor) = Component.text(this, namedTextColor)
 
-fun Component.toLegacy() = legacyComponentSerializer.serialize(this)
+internal fun Int.toComponent() = Component.text(this)
+internal fun Boolean.toComponent() = Component.text(this)
 
-fun String.toComponent() = Component.text(this)
-fun String.toComponent(namedTextColor: NamedTextColor) = Component.text(this, namedTextColor)
-
-fun Int.toComponent() = Component.text(this)
-fun Boolean.toComponent() = Component.text(this)
+internal fun Component.toPlainText() = PlainTextComponentSerializer.plainText().serialize(this)
