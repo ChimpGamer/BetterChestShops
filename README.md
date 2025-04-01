@@ -15,6 +15,23 @@ Add extra functionality to the ChestShop plugin.
 * HolographicDisplays
 * BentoBox
 
+## Commands
+
+| Command                          | Permission                            |
+|----------------------------------|---------------------------------------|
+| /mychesyshops                    | betterchestshops.command.mychestshops |
+| /bcs (page) (sortby)             | betterchestshops.command              |
+| /bcs about                       | betterchestshops.command.about        |
+| /bcs reload                      | betterchestshops.command.reload       |
+| /bcs clearinvalid (--aggressive) | betterchestshops.command.clearinvalid |
+| /bcs check                       | betterchestshops.command.check        |
+
+## Permissions
+| Permission                   | Description                                             |
+|------------------------------|---------------------------------------------------------|
+| betterchestshops.teleport    | Allow the player to teleport to chestshops              |
+| betterchestshops.shoplimit.x | x is the amount of shop the player is allowed to create |
+
 ## Screenshots
 
 ![2025-04-01_19 58 30](https://github.com/user-attachments/assets/2be33c6c-f976-4eca-b98c-a6490c643949)
