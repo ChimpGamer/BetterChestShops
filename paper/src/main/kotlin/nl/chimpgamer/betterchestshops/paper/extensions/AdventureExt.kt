@@ -10,3 +10,6 @@ fun Component.toLegacy() = legacyComponentSerializer.serialize(this)
 
 fun String.toComponent() = Component.text(this)
 fun String.toComponent(namedTextColor: NamedTextColor) = Component.text(this, namedTextColor)
+
+fun Int.toComponent() = Component.text(this)
+fun Boolean.toComponent() = Component.text(this)

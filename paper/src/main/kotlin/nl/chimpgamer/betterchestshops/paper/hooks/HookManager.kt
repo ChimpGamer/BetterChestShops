@@ -8,19 +8,23 @@ import org.bukkit.event.server.PluginEnableEvent
 
 class HookManager(plugin: BetterChestShopsPlugin) : Listener {
     private val placeholderAPIHook = PlaceholderAPIHook(plugin)
+    private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
 
     fun load() {
         placeholderAPIHook.load()
+        miniPlaceholdersHook.load()
     }
 
     fun unload() {
         placeholderAPIHook.unload()
+        miniPlaceholdersHook.unload()
     }
 
     @EventHandler
     fun PluginEnableEvent.onPluginEnable() {
         when (plugin.name) {
             "PlaceholderAPI" -> placeholderAPIHook.load()
+            "MiniPlaceholders" -> miniPlaceholdersHook.load()
         }
     }
 
@@ -28,6 +32,7 @@ class HookManager(plugin: BetterChestShopsPlugin) : Listener {
     fun PluginDisableEvent.onPluginDisable() {
         when (plugin.name) {
             "PlaceholderAPI" -> placeholderAPIHook.unload()
+            "MiniPlaceholders" -> miniPlaceholdersHook.unload()
         }
     }
 }

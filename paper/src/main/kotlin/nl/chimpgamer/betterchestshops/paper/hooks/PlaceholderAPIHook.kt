@@ -4,20 +4,17 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import org.bukkit.entity.Player
 
-class PlaceholderAPIHook(private val plugin: BetterChestShopsPlugin) {
+class PlaceholderAPIHook(plugin: BetterChestShopsPlugin) : PluginHook(plugin, "PlaceholderAPI") {
     private lateinit var placeholderExpansion: BetterChestShopsPlaceholderExpansion
 
-    private val name = "PlaceholderAPI"
-    private val isEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
-
-    fun load() {
-        if (isEnabled) {
+    override fun load() {
+        if (canHook()) {
             placeholderExpansion = BetterChestShopsPlaceholderExpansion(plugin).also { it.register() }
-            plugin.logger.info("Successfully loaded $name hook!")
+            plugin.logger.info("Successfully loaded $pluginName hook!")
         }
     }
 
-    fun unload() {
+    override fun unload() {
         if (this::placeholderExpansion.isInitialized) {
             placeholderExpansion.unregister()
         }

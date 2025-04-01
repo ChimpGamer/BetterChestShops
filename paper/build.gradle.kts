@@ -23,6 +23,8 @@ dependencies {
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
     compileOnly("world.bentobox:bentobox:2.4.0-SNAPSHOT")
     compileOnly("de.oliver:FancyHolograms:2.3.3")
+    compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
+    compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
     compileOnly("org.incendo:cloud-core:2.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.10")
