@@ -97,7 +97,7 @@ tasks {
 }
 
 fun getDate(): String {
-    val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy hh:mm:ss")
+    val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
     val date = Date()
     return simpleDateFormat.format(date)
 }
