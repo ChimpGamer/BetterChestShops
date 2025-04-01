@@ -14,6 +14,7 @@ Add extra functionality to the ChestShop plugin.
 * FancyHolograms
 * HolographicDisplays
 * BentoBox
+* PlaceholderAPI
 
 ## Commands
 
@@ -31,6 +32,13 @@ Add extra functionality to the ChestShop plugin.
 |------------------------------|---------------------------------------------------------|
 | betterchestshops.teleport    | Allow the player to teleport to chestshops              |
 | betterchestshops.shoplimit.x | x is the amount of shop the player is allowed to create |
+
+## PlaceholderAPI Placeholders
+| Placeholder                                     |
+|-------------------------------------------------|
+| %betterchestshops_chestshops_created%           |
+| %betterchestshops_chestshop_limit%              |
+| %betterchestshops_chestshop_has_reached_limit%  |
 
 ## Screenshots
 
