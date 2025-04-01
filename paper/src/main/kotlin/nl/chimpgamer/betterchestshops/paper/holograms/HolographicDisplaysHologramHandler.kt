@@ -22,7 +22,7 @@ class HolographicDisplaysHologramHandler(private val plugin: BetterChestShopsPlu
             containerLocation.y + plugin.settingsConfig.hologramOffSetY + 0.6,
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
-        // Barrels are higher then chests
+        // Barrels are higher than chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
         val api = HolographicDisplaysAPI.get(plugin.bootstrap)

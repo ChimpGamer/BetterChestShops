@@ -33,7 +33,7 @@ class FancyHologramsHologramHandler(private val plugin: BetterChestShopsPlugin) 
             displayLocation.direction = signBlockData.facing.direction
         }
 
-        // Barrels are higher then chests
+        // Barrels are higher than chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
         val hologramManager = FancyHologramsPlugin.get().hologramManager

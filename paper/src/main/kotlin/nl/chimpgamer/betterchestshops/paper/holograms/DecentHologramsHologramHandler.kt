@@ -22,7 +22,7 @@ class DecentHologramsHologramHandler(private val plugin: BetterChestShopsPlugin)
             containerLocation.y + plugin.settingsConfig.hologramOffSetY + 0.6, // Add extra 0.6 because that is DecentHolograms default icon spacing
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
-        // Barrels are higher then chests
+        // Barrels are higher than chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
         val hologram = DHAPI.createHologram(UUID.randomUUID().toString(), displayLocation)

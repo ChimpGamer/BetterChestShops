@@ -24,7 +24,7 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
             containerLocation.y + plugin.settingsConfig.hologramOffSetY + 0.5, // Add extra 0.5 because that is CMI default icon spacing
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
-        // Barrels are higher then chests
+        // Barrels are higher than chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
 
         val hologram = CMIHologram(UUID.randomUUID().toString(), CMILocation(displayLocation))
