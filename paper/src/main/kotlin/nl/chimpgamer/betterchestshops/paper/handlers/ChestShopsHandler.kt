@@ -11,6 +11,7 @@ import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
@@ -32,28 +33,30 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
             if (betterChestShops.empty()) {
                 plugin.dataFolder.resolve("data.db").copyTo(plugin.dataFolder.resolve("data.db.backup"), overwrite = true)
                 val newChestShops = HashSet<BetterChestShopEntity>()
-                // Do conversion!
-                val oldChestShops = ChestShopEntity.all().map { it.toChestShop() }
-                for (oldChestShop in oldChestShops) {
-                    newChestShops.add(
-                        BetterChestShopEntity.new {
-                            this.creatorUUID = oldChestShop.creatorUUID
-                            this.containerType = oldChestShop.containerType
-                            this.amount = oldChestShop.amount
-                            this.signLocation = oldChestShop.signLocation
-                            this.itemStack = oldChestShop.itemStack
-                            this.buyPrice = oldChestShop.buyPrice
-                            this.sellPrice = oldChestShop.sellPrice
-                            this.created = oldChestShop.created
-                        }
-                    )
-                }
-                loadedChestShops.putAll(newChestShops.map { it.toChestShop() }
-                    .filter { runCatching { it.signLocation }.isSuccess } // If World is valid then cache it.
-                    .map { it.signLocation to it })
-                plugin.logger.info("Converted ${newChestShops.size}/${oldChestShops.size} chestshops!")
-                transaction {
-                    SchemaUtils.drop(ChestShopsTable)
+                if (ChestShopsTable.exists()) {
+                    // Do conversion!
+                    val oldChestShops = ChestShopEntity.all().map { it.toChestShop() }
+                    for (oldChestShop in oldChestShops) {
+                        newChestShops.add(
+                            BetterChestShopEntity.new {
+                                this.creatorUUID = oldChestShop.creatorUUID
+                                this.containerType = oldChestShop.containerType
+                                this.amount = oldChestShop.amount
+                                this.signLocation = oldChestShop.signLocation
+                                this.itemStack = oldChestShop.itemStack
+                                this.buyPrice = oldChestShop.buyPrice
+                                this.sellPrice = oldChestShop.sellPrice
+                                this.created = oldChestShop.created
+                            }
+                        )
+                    }
+                    loadedChestShops.putAll(newChestShops.map { it.toChestShop() }
+                        .filter { runCatching { it.signLocation }.isSuccess } // If World is valid then cache it.
+                        .map { it.signLocation to it })
+                    plugin.logger.info("Converted ${newChestShops.size}/${oldChestShops.size} chestshops!")
+                    transaction {
+                        SchemaUtils.drop(ChestShopsTable)
+                    }
                 }
             } else {
                 loadedChestShops.putAll(betterChestShops.map { it.toChestShop() }
