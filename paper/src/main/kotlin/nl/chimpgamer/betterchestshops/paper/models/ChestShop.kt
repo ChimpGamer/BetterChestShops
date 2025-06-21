@@ -1,5 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.models
 
+import com.Acrobot.ChestShop.Configuration.Properties
 import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.Acrobot.ChestShop.Utils.uBlock
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
@@ -41,7 +42,7 @@ class ChestShop(
             return null
         }
 
-    val creatorName: String? = if (BetterChestShopsPlugin.instance.consoleUUID == creatorUUID) "Admin Shop" else Bukkit.getServer().getOfflinePlayer(creatorUUID).name
+    val creatorName: String? = if (BetterChestShopsPlugin.instance.consoleUUID == creatorUUID) Properties.ADMIN_SHOP_NAME else Bukkit.getServer().getOfflinePlayer(creatorUUID).name
 
     val friendlyItemTypeName = (itemStack?.type?.name ?: "Nothing").lowercase().capitalizeWords()
 
