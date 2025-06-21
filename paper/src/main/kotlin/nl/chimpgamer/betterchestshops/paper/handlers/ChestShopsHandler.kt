@@ -86,7 +86,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
     ) : ChestShop {
         val existingChestShop = getByLocation(signLocation)
         if (existingChestShop != null) {
-            // Okay so it is being updated?
+            // Okay, so it is being updated?
             val updatedChestShop = newSuspendedTransaction(databaseDispatcher) {
                 BetterChestShopEntity[existingChestShop.id].apply {
                     this.creatorUUID = creator

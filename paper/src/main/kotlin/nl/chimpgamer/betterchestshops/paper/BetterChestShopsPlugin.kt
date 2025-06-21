@@ -126,7 +126,6 @@ class BetterChestShopsPlugin(val bootstrap: Bootstrap) {
 
         pluginManager.registerSuspendingEvents(ChestShopListener(this), bootstrap, eventDispatcher)
 
-
         if (pluginManager.isPluginEnabled("BentoBox")) {
             pluginManager.registerSuspendingEvents(BentoBoxListener(this), bootstrap, mapOf(
                 Pair(MCCoroutineExceptionEvent::class.java) {

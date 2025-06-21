@@ -72,7 +72,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
 
             val containerType = try {
                 ContainerType.valueOf(container.type.toString().uppercase())
-            } catch (ex: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 player.sendMessage(
                     plugin.messagesConfig.shopCreateUnknownContainerTypes.parse(
                         Placeholder.parsed("container_types", ContainerType.entries.joinToString())
@@ -117,7 +117,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     suspend fun onBlockBreak(event: BlockBreakEvent) {
-        // Omdat bij het breken van Container ShopDestroyedEvent niet wordt getriggerd.
+        // When breaking a container, the ChestShop plugin doesn't trigger the ShopDestroyedEvent.
         if (event.block.state is Container) {
             val sign = uBlock.findAnyNearbyShopSign(event.block) ?: return
             val chestShop = plugin.chestShopsHandler.getByLocation(sign.location) ?: return
@@ -137,7 +137,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     }
 
     /**
-     * Protect the chestshop containers from being pushed by piston
+     * Protect the chestshop containers from being pushed by the piston
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBlockPistonExtend(event: BlockPistonExtendEvent) {
@@ -147,7 +147,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     }
 
     /**
-     * Remove chest shop item above chest shop when block is placed above chest.
+     * Remove the chest shop item above chest shop when the block is placed above a chest.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
@@ -156,7 +156,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     }
 
     /**
-     * Spawn item above chest when block above chest shop is broken.
+     * Spawn item above a chest when block above chest shop is broken.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     suspend fun onBlockBreakAboveChest(event: BlockBreakEvent) {
@@ -173,7 +173,7 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onChunkLoad(event: ChunkLoadEvent) {
         if (event.isNewChunk) return
-        // Load chestshop items if there are chestshops in this chunk.
+        // Load chestshop items if there are chest shops in this chunk.
 
         plugin.chestShopsHandler.getChestShopsByChunk(event.chunk).forEach(ChestShop::spawnItem)
     }
