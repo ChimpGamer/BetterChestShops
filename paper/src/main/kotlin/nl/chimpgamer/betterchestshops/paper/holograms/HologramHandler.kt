@@ -12,4 +12,9 @@ interface HologramHandler {
     fun destroyItem(location: Location)
 
     fun destroyItems()
+
+    companion object {
+        const val BARREL_HEIGHT_ADJUSTMENT = 0.15
+    }
+
 }

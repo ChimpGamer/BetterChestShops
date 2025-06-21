@@ -6,6 +6,7 @@ import de.oliver.fancyholograms.api.data.ItemHologramData
 import de.oliver.fancyholograms.api.hologram.Hologram
 import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.holograms.HologramHandler.Companion.BARREL_HEIGHT_ADJUSTMENT
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import org.bukkit.Location
@@ -34,7 +35,7 @@ class FancyHologramsHologramHandler(private val plugin: BetterChestShopsPlugin) 
         }
 
         // Barrels are higher than chests
-        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
+        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, BARREL_HEIGHT_ADJUSTMENT, 0.0)
 
         val hologramManager = FancyHologramsPlugin.get().hologramManager
         val hologramData = ItemHologramData(UUID.randomUUID().toString(), displayLocation)

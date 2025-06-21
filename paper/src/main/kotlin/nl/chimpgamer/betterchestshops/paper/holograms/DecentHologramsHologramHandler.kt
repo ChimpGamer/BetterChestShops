@@ -3,6 +3,7 @@ package nl.chimpgamer.betterchestshops.paper.holograms
 import eu.decentsoftware.holograms.api.DHAPI
 import eu.decentsoftware.holograms.api.holograms.Hologram
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.holograms.HologramHandler.Companion.BARREL_HEIGHT_ADJUSTMENT
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import org.bukkit.Location
@@ -23,7 +24,7 @@ class DecentHologramsHologramHandler(private val plugin: BetterChestShopsPlugin)
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
         // Barrels are higher than chests
-        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
+        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, BARREL_HEIGHT_ADJUSTMENT, 0.0)
 
         val hologram = DHAPI.createHologram(UUID.randomUUID().toString(), displayLocation)
         DHAPI.addHologramLine(hologram, itemStack)

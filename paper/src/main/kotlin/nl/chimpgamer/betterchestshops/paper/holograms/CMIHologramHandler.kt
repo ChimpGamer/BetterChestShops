@@ -5,6 +5,7 @@ import com.Zrips.CMI.Modules.Holograms.CMIHologram
 import net.Zrips.CMILib.Container.CMILocation
 import net.Zrips.CMILib.Items.CMIItemStack
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.holograms.HologramHandler.Companion.BARREL_HEIGHT_ADJUSTMENT
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import org.bukkit.Location
@@ -25,7 +26,7 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
         // Barrels are higher than chests
-        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, 0.15, 0.0)
+        if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, BARREL_HEIGHT_ADJUSTMENT, 0.0)
 
         val hologram = CMIHologram(UUID.randomUUID().toString(), CMILocation(displayLocation))
 
