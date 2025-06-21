@@ -178,7 +178,7 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
 
         contents[47] = IntelligentItem.of(
             ItemStack(Material.HOPPER).richName("<gold>Sort")
-                .richLore("<gray>Click to sort the chestshops in a specific order")
+                .richLore("<gray>Click to sort the chest shops in a specific order")
                 .richLore("<gray>Currently sorted by: <yellow>$sortBy")
         ) {
             contents.setProperty("chestshop_sort_by", sortBy.next())
