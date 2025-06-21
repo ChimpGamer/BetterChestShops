@@ -35,3 +35,6 @@ dependencies:
   - name: MiniPlaceholders
     required: false
     bootstrap: false
+  - name: GHolo
+    required: false
+    bootstrap: false

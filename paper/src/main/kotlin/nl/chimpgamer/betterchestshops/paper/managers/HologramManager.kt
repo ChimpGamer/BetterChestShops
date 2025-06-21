@@ -13,6 +13,7 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
      * CMI is not thread-safe
      * HolographicDisplays is untested for thread-safety
      * FancyHolograms is not thread-safe
+     * GHolo is not thread-safe
      */
 
     fun initialize() {
@@ -38,6 +39,7 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
                 isPluginEnabled("CMI") -> hologramHandler = CMIHologramHandler(plugin)
                 isPluginEnabled("HolographicDisplays") -> hologramHandler = HolographicDisplaysHologramHandler(plugin)
                 isPluginEnabled("FancyHolograms") -> hologramHandler = FancyHologramsHologramHandler(plugin)
+                isPluginEnabled("GHolo") -> hologramHandler = GHoloHologramHandler(plugin)
             }
         } else {
             when {
@@ -52,6 +54,9 @@ class HologramManager(private val plugin: BetterChestShopsPlugin) {
                 }
                 hologramHandlerSetting.equals("FancyHolograms", ignoreCase = true) && isPluginEnabled("FancyHolograms") -> {
                     hologramHandler = FancyHologramsHologramHandler(plugin)
+                }
+                hologramHandlerSetting.equals("GHolo", ignoreCase = true) && isPluginEnabled("GHolo") -> {
+                    hologramHandler = GHoloHologramHandler(plugin)
                 }
             }
         }
