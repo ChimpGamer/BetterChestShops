@@ -30,7 +30,7 @@ class BetterChestShopsPlaceholderExpansion(private val plugin: BetterChestShopsP
             "chestshops_created" -> plugin.chestShopsHandler.getAllByCreator(player.uniqueId).size.toString()
             "chestshop_limit" -> plugin.getChestShopLimit(player).toString()
             "chestshop_has_reached_limit" -> plugin.hasReachedLimit(player).toString()
-             else -> return null
+             else -> null
         }
     }
 
