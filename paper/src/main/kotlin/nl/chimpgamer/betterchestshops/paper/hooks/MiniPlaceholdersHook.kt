@@ -12,18 +12,14 @@ class MiniPlaceholdersHook internal constructor(plugin: BetterChestShopsPlugin) 
     override fun load() {
         if (!canHook()) return
         val builder = Expansion.builder("betterchestshops")
-            .filter(Player::class.java)
 
-            .audiencePlaceholder("chestshops_created") { audience, _, _ ->
-                audience as Player
+            .audiencePlaceholder(Player::class.java,"chestshops_created") { audience, _, _ ->
                 selfClosingInserting(plugin.chestShopsHandler.getAllByCreator(audience.uniqueId).size.toComponent())
             }
-            .audiencePlaceholder("chestshop_limit") { audience, _, _ ->
-                audience as Player
+            .audiencePlaceholder(Player::class.java,"chestshop_limit") { audience, _, _ ->
                 selfClosingInserting(plugin.getChestShopLimit(audience).toComponent())
             }
-            .audiencePlaceholder("chestshop_has_reached_limit") { audience, _, _ ->
-                audience as Player
+            .audiencePlaceholder(Player::class.java,"chestshop_has_reached_limit") { audience, _, _ ->
                 selfClosingInserting(plugin.hasReachedLimit(audience).toComponent())
             }
 
