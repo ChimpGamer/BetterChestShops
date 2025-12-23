@@ -28,8 +28,8 @@ dependencies {
     compileOnly("com.github.gecolay.GHolo:GHolo:2.1.2") { isTransitive = false }
 
     compileOnly("org.incendo:cloud-core:2.0.0")
-    compileOnly("org.incendo:cloud-paper:2.0.0-beta.10")
-    compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.10")
+    compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")
+    compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
     compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0")
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.20.0") { isTransitive = false }
