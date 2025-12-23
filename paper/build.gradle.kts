@@ -25,7 +25,7 @@ dependencies {
     compileOnly("de.oliver:FancyHolograms:2.3.3")
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
     compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
-    compileOnly("com.github.gecolay.GHolo:GHolo:2.1.2") { isTransitive = false }
+    compileOnly("com.github.gecolay.GHolo:GHolo:2.3.0") { isTransitive = false }
 
     compileOnly("org.incendo:cloud-core:2.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")
