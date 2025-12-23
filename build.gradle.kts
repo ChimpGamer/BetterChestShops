@@ -42,7 +42,7 @@ subprojects {
         compileOnly("org.xerial:sqlite-jdbc:3.48.0.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
-        compileOnly("com.zaxxer:HikariCP:6.2.1")
+        compileOnly("com.zaxxer:HikariCP:7.0.2")
 
         compileOnly(fileTree("../libs"))
     }

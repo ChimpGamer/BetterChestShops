@@ -27,7 +27,7 @@ public class BetterChestShopsLoader implements PluginLoader {
             add("org.incendo:cloud-minecraft-extras:2.0.0-beta.10");
             add("org.incendo:cloud-kotlin-coroutines:2.0.0");
             add("dev.dejvokep:boosted-yaml:1.3.7");
-            add("com.zaxxer:HikariCP:6.2.1");
+            add("com.zaxxer:HikariCP:7.0.2");
         }};
 
         var mavenLibraryResolver = new MavenLibraryResolver();
