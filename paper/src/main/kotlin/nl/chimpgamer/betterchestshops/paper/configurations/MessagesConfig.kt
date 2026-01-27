@@ -11,12 +11,15 @@ import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 class MessagesConfig(plugin: BetterChestShopsPlugin) {
     val config: YamlDocument
 
-    val noPermission: String get() = config.getString("noPermission")
+    val noPermission: String get() = config.getString("no-permission")
 
     val maximumLimitReached: String get() = config.getString("shop.create.maximum-limit-reached")
 
     val shopCreateError: String get() = config.getString("shop.create.error")
     val shopCreateUnknownContainerTypes: String get() = config.getString("shop.create.unknown-container-types")
+
+    val teleportUnsafe: String get() = config.getString("teleport.unsafe")
+    val teleportUnsafeTpAnyway: String get() = config.getString("teleport.unsafe-tp-anyway")
 
     init {
         val file = plugin.dataFolder.resolve("messages.yml")

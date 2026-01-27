@@ -123,7 +123,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
                             if (l.isSafe()) {
                                 location = l
                             } else {
-                                player.sendRichMessage("<red>Teleport location is unsafe!")
+                                player.sendRichMessage(plugin.messagesConfig.teleportUnsafeTpAnyway)
                                 return@of
                             }
                         }

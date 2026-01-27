@@ -154,13 +154,7 @@ class ChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryProv
                                     plugin.server.getPlayer(uuid)
                                         ?.teleportAsync(chestShop.signLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
                                 }, ClickCallback.Options.builder().lifetime(Duration.ofMinutes(1L)).build())
-                                val teleportIsUnsafeMessage =
-                                    "Teleport location is unsafe!".toComponent(NamedTextColor.RED).append(Component.space())
-                                        .append(
-                                            "[Click here to teleport anyway]".toComponent(NamedTextColor.DARK_RED)
-                                                .clickEvent(tpAnywayClickEvent)
-                                        )
-                                player.sendMessage(teleportIsUnsafeMessage)
+                                player.sendMessage(plugin.messagesConfig.teleportUnsafeTpAnyway.parse(Placeholder.styling("tp-anyway", tpAnywayClickEvent)))
                                 return@of
                             }
                         }
