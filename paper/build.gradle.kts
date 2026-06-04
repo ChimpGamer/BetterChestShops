@@ -11,7 +11,7 @@ repositories {
 
     maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
 
-    maven("https://repo.fancyplugins.de/releases") // FancyHolograms Repository
+    maven("https://repo.fancyinnovations.com/releases") // FancyHolograms Repository
 }
 
 dependencies {
