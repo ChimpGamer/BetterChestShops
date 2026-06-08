@@ -139,6 +139,12 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
             }
         }
 
+        contents[47] = IntelligentItem.empty(
+            ItemStack(Material.OAK_SIGN)
+                .richName("<gold>Aantal Chestshops")
+                .richLore("<gold>Je hebt <yellow>${chestShops.size} <gold>chestshops geplaatst!")
+        )
+
         contents[49] = IntelligentItem.of(ItemStack(Material.IRON_DOOR).richName("<red>Close")) {
             inventory.close(player)
         }
