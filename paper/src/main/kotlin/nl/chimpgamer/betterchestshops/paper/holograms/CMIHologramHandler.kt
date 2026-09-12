@@ -2,8 +2,8 @@ package nl.chimpgamer.betterchestshops.paper.holograms
 
 import com.Zrips.CMI.CMI
 import com.Zrips.CMI.Modules.Holograms.CMIHologram
-import net.Zrips.CMILib.Container.CMILocation
-import net.Zrips.CMILib.Items.CMIItemStack
+import com.Zrips.CMI.Modules.Holograms.CMIHologramLineIcon
+import com.Zrips.CMI.Modules.Holograms.CMIHologramType
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.holograms.HologramHandler.Companion.BARREL_HEIGHT_ADJUSTMENT
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
@@ -22,35 +22,51 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
         var displayLocation = Location(
             containerLocation.world,
             containerLocation.x + plugin.settingsConfig.hologramOffSetX,
-            containerLocation.y + plugin.settingsConfig.hologramOffSetY + 0.5, // Add extra 0.5 because that is CMI default icon spacing
+            containerLocation.y + plugin.settingsConfig.hologramOffSetY,
             containerLocation.z + plugin.settingsConfig.hologramOffSetZ
         )
         // Barrels are higher than chests
         if (chestShop.containerType !== ContainerType.BARREL) displayLocation = displayLocation.subtract(0.0, BARREL_HEIGHT_ADJUSTMENT, 0.0)
 
-        val hologram = CMIHologram(UUID.randomUUID().toString(), CMILocation(displayLocation))
+        val hologram = CMIHologram(UUID.randomUUID().toString(), displayLocation)
+        hologram.type = CMIHologramType.ArmorStand
 
         val enchanted = itemStack.enchantments.isNotEmpty()
 
-        hologram.addLine("ICON:${itemStack.type}" + if (enchanted) "%enchanted%" else "")
-        hologram.updateIntervalSec = -1.0 // Disable updating of the hologram
-        hologram.showRange = 20
+        val lineIcon = CMIHologramLineIcon("ICON:${itemStack.type}" + if (enchanted) "%enchanted%" else "")
+        lineIcon.setIcon(itemStack)
+        hologram.pages.addLine(lineIcon.iconText)
+        hologram.settings.apply {
+            visibilityRange = 20
+            updateIntervalTicks = 0
+            isSaveToFile = false
+        }
         hologram.update()
 
+        destroyDuplicates(displayLocation)
         locationToHologram[containerLocation] = hologram
-        CMI.getInstance().hologramManager.addHologram(hologram)
-
-        val page = hologram.getPage(1) ?: return
-        val line = page.lines[0] ?: return
-        line.item = CMIItemStack(itemStack)
+        CMI.getInstance().hologramManager.add(hologram)
     }
 
     override fun destroyItem(location: Location) {
         val hologram = locationToHologram.remove(location) ?: return
-        CMI.getInstance().hologramManager.removeHolo(hologram)
+        CMI.getInstance().hologramManager.remove(hologram)
     }
 
     override fun destroyItems() {
         locationToHologram.keys.forEach { destroyItem(it) }
+    }
+
+    private fun destroyDuplicates(location: Location) {
+        val toRemove = mutableSetOf<CMIHologram>()
+        CMI.getInstance().hologramManager.holograms.values.forEach { hologram ->
+            val centerLocation = hologram.centerLocation ?: return@forEach
+            if (centerLocation.world != location.world) return@forEach
+            if (centerLocation.distance(location) <= 1.0) {
+                toRemove.add(hologram)
+            }
+        }
+
+        toRemove.forEach { CMI.getInstance().hologramManager.remove(it) }
     }
 }

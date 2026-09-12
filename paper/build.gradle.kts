@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("com.acrobot.chestshop:chestshop:3.12.2")
@@ -26,6 +26,7 @@ dependencies {
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.1.0")
     compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:3.1.0")
     compileOnly("com.github.gecolay.GHolo:GHolo:2.3.0") { isTransitive = false }
+    compileOnly("com.github.Zrips:CMI-API:9.8.6.4")
 
     compileOnly("org.incendo:cloud-core:2.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")

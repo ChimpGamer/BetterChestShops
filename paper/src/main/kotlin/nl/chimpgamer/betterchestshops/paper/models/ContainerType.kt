@@ -6,4 +6,5 @@ enum class ContainerType(val material: Material) {
     CHEST(Material.CHEST),
     TRAPPED_CHEST(Material.TRAPPED_CHEST),
     BARREL(Material.BARREL),
+    COPPER_CHEST(Material.COPPER_CHEST)
 }

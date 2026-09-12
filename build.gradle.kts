@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.betterchestshops"
-    version = "1.0.0-SNAPSHOT"
+    version = "1.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -44,7 +44,7 @@ subprojects {
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
         compileOnly("com.zaxxer:HikariCP:7.0.2")
 
-        compileOnly(fileTree("../libs"))
+        //compileOnly(fileTree("../libs"))
     }
 
     java {
