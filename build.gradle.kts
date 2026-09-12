@@ -43,8 +43,6 @@ subprojects {
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
         compileOnly("com.zaxxer:HikariCP:7.0.2")
-
-        //compileOnly(fileTree("../libs"))
     }
 
     java {
