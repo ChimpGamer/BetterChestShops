@@ -43,7 +43,6 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
         }
         hologram.update()
 
-        destroyDuplicates(displayLocation)
         locationToHologram[containerLocation] = hologram
         CMI.getInstance().hologramManager.add(hologram)
     }
@@ -55,18 +54,5 @@ class CMIHologramHandler(private val plugin: BetterChestShopsPlugin) : HologramH
 
     override fun destroyItems() {
         locationToHologram.keys.forEach { destroyItem(it) }
-    }
-
-    private fun destroyDuplicates(location: Location) {
-        val toRemove = mutableSetOf<CMIHologram>()
-        CMI.getInstance().hologramManager.holograms.values.forEach { hologram ->
-            val centerLocation = hologram.centerLocation ?: return@forEach
-            if (centerLocation.world != location.world) return@forEach
-            if (centerLocation.distance(location) <= 1.0) {
-                toRemove.add(hologram)
-            }
-        }
-
-        toRemove.forEach { CMI.getInstance().hologramManager.remove(it) }
     }
 }
