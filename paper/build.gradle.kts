@@ -15,7 +15,26 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly(kotlin("stdlib"))
+
+    compileOnly(libs.paper.api)
+
+    compileOnly(libs.boostedYaml)
+    compileOnly(libs.exposed.core) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.exposed.dao) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.exposed.jdbc) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.exposed.java.time) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.sqlite)
+    compileOnly(libs.mariadb)
+    compileOnly(libs.hikariCP)
 
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("com.acrobot.chestshop:chestshop:3.12.2")
@@ -36,7 +55,7 @@ dependencies {
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.23.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.23.0") { isTransitive = false }
 
-    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.14")
+    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.7.1")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 }

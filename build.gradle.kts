@@ -23,28 +23,6 @@ subprojects {
         plugin("com.gradleup.shadow")
     }
 
-    dependencies {
-        compileOnly(kotlin("stdlib"))
-
-        compileOnly("dev.dejvokep:boosted-yaml:1.3.7")
-        compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
-            exclude("org.jetbrains.kotlin")
-        }
-        compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
-            exclude("org.jetbrains.kotlin")
-        }
-        compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
-            exclude("org.jetbrains.kotlin")
-        }
-        compileOnly("org.jetbrains.exposed:exposed-java-time:$exposedVersion") {
-            exclude("org.jetbrains.kotlin")
-        }
-        compileOnly("org.xerial:sqlite-jdbc:3.48.0.0")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
-        compileOnly("com.zaxxer:HikariCP:7.0.2")
-    }
-
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))

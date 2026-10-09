@@ -1,0 +1,27 @@
+[versions]
+
+# Platforms
+paper-api = "1.21.11-R0.1-SNAPSHOT"
+
+# Others
+exposed = "0.60.0"
+mariadb = "3.5.2"
+boostedYaml = "1.3.7"
+hikariCP = "7.0.2"
+sqlite = "3.49.1.0"
+
+[libraries]
+
+# Platforms
+paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper-api" }
+
+# Others
+
+exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
+exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { group = "org.jetbrains.exposed", name = "exposed-java-time", version.ref = "exposed" }
+mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb" }
+boostedYaml = { group = "dev.dejvokep", name = "boosted-yaml", version.ref = "boostedYaml" }
+hikariCP =  { group = "com.zaxxer", name = "HikariCP", version.ref = "hikariCP" }
+sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite" }
