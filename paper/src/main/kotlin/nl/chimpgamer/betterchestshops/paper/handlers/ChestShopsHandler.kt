@@ -163,9 +163,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
      * @param chunk The chunk you want to get the chest shops from.
      * @return A set with all the chest shops in the given chunk.
      */
-    fun getChestShopsByChunk(chunk: Chunk) = chestShops.filterKeys { it.isWorldLoaded && it.isChunkLoaded && it.chunk == chunk }.values.toSet()
-
-    fun getChestShopsOnChunkLoad(event: ChunkLoadEvent) = chestShops.values.filter { it.signLocation.chunk == event.chunk }
+    fun getChestShopsByChunk(chunk: Chunk) = chestShops.values.filter { it.signLocation.isWorldLoaded && it.signLocation.isChunkLoaded && it.signLocation.chunk == chunk }
 
     fun getChestShops(predicate: (ChestShop) -> Boolean) = chestShops.values.filter(predicate)
 }

@@ -175,6 +175,6 @@ class ChestShopListener(private val plugin: BetterChestShopsPlugin) : Listener {
         if (event.isNewChunk) return
         // Load chestshop items if there are chest shops in this chunk.
 
-        plugin.chestShopsHandler.getChestShopsOnChunkLoad(event).forEach(ChestShop::spawnItem)
+        plugin.chestShopsHandler.getChestShopsByChunk(event.chunk).forEach(ChestShop::spawnItem)
     }
 }
