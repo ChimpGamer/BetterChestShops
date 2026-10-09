@@ -9,6 +9,7 @@ import nl.chimpgamer.betterchestshops.paper.storage.entities.toChestShop
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.bukkit.Chunk
 import org.bukkit.Location
+import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.exists
@@ -163,6 +164,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
      * @return A set with all the chest shops in the given chunk.
      */
     fun getChestShopsByChunk(chunk: Chunk) = chestShops.filterKeys { it.isWorldLoaded && it.isChunkLoaded && it.chunk == chunk }.values.toSet()
+
+    fun getChestShopsOnChunkLoad(event: ChunkLoadEvent) = chestShops.values.filter { it.signLocation.chunk == event.chunk }
 
     fun getChestShops(predicate: (ChestShop) -> Boolean) = chestShops.values.filter(predicate)
 }
