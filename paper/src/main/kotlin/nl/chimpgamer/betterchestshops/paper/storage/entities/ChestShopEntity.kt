@@ -4,9 +4,9 @@ import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import nl.chimpgamer.betterchestshops.paper.utils.LocationUtils
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.dao.IntEntity
+import org.jetbrains.exposed.v1.dao.IntEntityClass
 
 class ChestShopEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ChestShopEntity>(ChestShopsTable)

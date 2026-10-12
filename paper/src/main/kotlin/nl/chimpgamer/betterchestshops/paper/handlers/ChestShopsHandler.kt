@@ -1,5 +1,6 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
+import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.toChunkKey
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
@@ -12,10 +13,10 @@ import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.exists
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.exists
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -97,27 +98,31 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         val existingChestShop = getByLocation(signLocation)
         if (existingChestShop != null) {
             // Okay, so it is being updated?
-            val updatedChestShop = newSuspendedTransaction(databaseDispatcher) {
-                BetterChestShopEntity[existingChestShop.id].apply {
-                    this.creatorUUID = creator
-                    this.amount = amount
-                    this.itemStack = itemStack
-                    this.buyPrice = buyPrice
-                    this.sellPrice = sellPrice
+            val updatedChestShop = withContext(databaseDispatcher) {
+                suspendTransaction {
+                    BetterChestShopEntity[existingChestShop.id].apply {
+                        this.creatorUUID = creator
+                        this.amount = amount
+                        this.itemStack = itemStack
+                        this.buyPrice = buyPrice
+                        this.sellPrice = sellPrice
+                    }
                 }
             }
             return chestShops.replace(signLocation, updatedChestShop.toChestShop())!!
         }
-        val newChestShop = newSuspendedTransaction(databaseDispatcher) {
-            BetterChestShopEntity.new {
-                this.creatorUUID = creator
-                this.containerType = containerType
-                this.amount = amount
-                this.signLocation = signLocation
-                this.itemStack = itemStack
-                this.buyPrice = buyPrice
-                this.sellPrice = sellPrice
-                this.created = LocalDateTime.now()
+        val newChestShop = withContext(databaseDispatcher) {
+            suspendTransaction {
+                BetterChestShopEntity.new {
+                    this.creatorUUID = creator
+                    this.containerType = containerType
+                    this.amount = amount
+                    this.signLocation = signLocation
+                    this.itemStack = itemStack
+                    this.buyPrice = buyPrice
+                    this.sellPrice = sellPrice
+                    this.created = LocalDateTime.now()
+                }
             }
         }
         //println("newChestShop=$newChestShop")
@@ -142,8 +147,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         chestShop.destroyItem()
         val id = chestShop.id
 
-        newSuspendedTransaction(databaseDispatcher) {
-            BetterChestShopEntity.findById(id)?.delete()
+        withContext(databaseDispatcher) {
+            suspendTransaction { BetterChestShopEntity.findById(id)?.delete() }
         }
         chestShops.remove(chestShop.signLocation)
         val chunkKey = chestShop.signLocation.toChunkKey()
@@ -155,13 +160,15 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
 
     suspend fun removeChestShops(chestShops: Collection<ChestShop>): AtomicInteger {
         val count = AtomicInteger()
-        newSuspendedTransaction(databaseDispatcher) {
-            chestShops.forEach {
-                BetterChestShopEntity.findById(it.id)?.delete()
-                if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet()
-                chestShopsByChunk[it.chunkKey]?.let { shops ->
-                    shops.remove(it)
-                    if (shops.isEmpty()) chestShopsByChunk.remove(it.chunkKey)
+        withContext(databaseDispatcher) {
+            suspendTransaction {
+                chestShops.forEach {
+                    BetterChestShopEntity.findById(it.id)?.delete()
+                    if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet()
+                    chestShopsByChunk[it.chunkKey]?.let { shops ->
+                        shops.remove(it)
+                        if (shops.isEmpty()) chestShopsByChunk.remove(it.chunkKey)
+                    }
                 }
             }
         }

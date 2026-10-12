@@ -2,9 +2,9 @@ package nl.chimpgamer.betterchestshops.paper.storage.entities
 
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
 import nl.chimpgamer.betterchestshops.paper.storage.tables.BetterChestShopsTable
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.dao.IntEntity
+import org.jetbrains.exposed.v1.dao.IntEntityClass
 
 class BetterChestShopEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<BetterChestShopEntity>(BetterChestShopsTable)

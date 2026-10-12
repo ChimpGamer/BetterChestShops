@@ -4,14 +4,15 @@ import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import nl.chimpgamer.betterchestshops.paper.utils.BlockLocationSerializer
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ColumnType
-import org.jetbrains.exposed.sql.javatime.datetime
-import org.jetbrains.exposed.sql.vendors.currentDialect
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ColumnType
+import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
+import org.jetbrains.exposed.v1.core.java.javaUUID
+import org.jetbrains.exposed.v1.core.vendors.currentDialect
+import org.jetbrains.exposed.v1.javatime.datetime
 
 object BetterChestShopsTable: IntIdTable("better_chest_shops") {
-    val creatorUUID = uuid("creator_uuid")
+    val creatorUUID = javaUUID("creator_uuid")
     val containerType = enumerationByName("container_type", 20, ContainerType::class)
     val amount = integer("amount")
     val signLocation: Column<Location> = registerColumn("sign_location", BlockLocationColumnType)
