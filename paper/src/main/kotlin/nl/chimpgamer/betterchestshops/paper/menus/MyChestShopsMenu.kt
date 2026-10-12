@@ -68,7 +68,7 @@ class MyChestShopsMenu(private val plugin: BetterChestShopsPlugin) : InventoryPr
                 if (this.itemStack == null) return@forEach
 
                 val tagResolver = TagResolver.resolver(
-                    Placeholder.component("item_display_name", itemStack.displayName()),
+                    Placeholder.component("item_display_name", itemStack.effectiveName()),
                     Placeholder.unparsed("item_friendly_type", friendlyItemTypeName),
                 )
 
