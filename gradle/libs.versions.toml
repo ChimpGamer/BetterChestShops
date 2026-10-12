@@ -8,7 +8,7 @@ exposed = "1.5.1"
 mariadb = "3.5.2"
 boostedYaml = "1.3.7"
 hikariCP = "7.0.2"
-sqlite = "3.49.1.0"
+sqlite = "3.53.2.1"
 
 [libraries]
 
