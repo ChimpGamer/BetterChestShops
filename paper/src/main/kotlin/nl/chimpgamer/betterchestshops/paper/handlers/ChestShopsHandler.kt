@@ -1,7 +1,9 @@
 package nl.chimpgamer.betterchestshops.paper.handlers
 
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
+import nl.chimpgamer.betterchestshops.paper.extensions.toChunkKey
 import nl.chimpgamer.betterchestshops.paper.models.ChestShop
+import nl.chimpgamer.betterchestshops.paper.models.ChunkKey
 import nl.chimpgamer.betterchestshops.paper.models.ContainerType
 import nl.chimpgamer.betterchestshops.paper.storage.entities.BetterChestShopEntity
 import nl.chimpgamer.betterchestshops.paper.storage.entities.ChestShopEntity
@@ -9,7 +11,6 @@ import nl.chimpgamer.betterchestshops.paper.storage.entities.toChestShop
 import nl.chimpgamer.betterchestshops.paper.storage.tables.ChestShopsTable
 import org.bukkit.Chunk
 import org.bukkit.Location
-import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.exists
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
     private val chestShops: MutableMap<Location, ChestShop> = ConcurrentHashMap()
+    private val chestShopsByChunk: MutableMap<ChunkKey, MutableSet<ChestShop>> = ConcurrentHashMap()
 
     private val databaseDispatcher get() = plugin.databaseHandler.databaseDispatcher
 
@@ -32,7 +34,8 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
             val betterChestShops = BetterChestShopEntity.all()
             plugin.logger.info("Found ${betterChestShops.count()} better chestshops in the database!")
             if (betterChestShops.empty()) {
-                plugin.dataFolder.resolve("data.db").copyTo(plugin.dataFolder.resolve("data.db.backup"), overwrite = true)
+                plugin.dataFolder.resolve("data.db")
+                    .copyTo(plugin.dataFolder.resolve("data.db.backup"), overwrite = true)
                 val newChestShops = HashSet<BetterChestShopEntity>()
                 if (ChestShopsTable.exists()) {
                     // Do conversion!
@@ -54,6 +57,9 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
                     loadedChestShops.putAll(newChestShops.map { it.toChestShop() }
                         .filter { runCatching { it.signLocation }.isSuccess } // If World is valid then cache it.
                         .map { it.signLocation to it })
+
+
+
                     plugin.logger.info("Converted ${newChestShops.size}/${oldChestShops.size} chestshops!")
                     transaction {
                         SchemaUtils.drop(ChestShopsTable)
@@ -66,7 +72,10 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
             }
         }
         chestShops.clear()
+        chestShopsByChunk.clear()
         chestShops.putAll(loadedChestShops)
+        chestShopsByChunk.putAll(loadedChestShops.values.groupBy { it.chunkKey }
+            .mapValues { (_, shops) -> shops.toMutableSet() })
         plugin.logger.info("Loaded ${chestShops.size} chestshops from the database.")
     }
 
@@ -84,7 +93,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         itemStack: ItemStack? = null,
         buyPrice: BigDecimal? = null,
         sellPrice: BigDecimal? = null
-    ) : ChestShop {
+    ): ChestShop {
         val existingChestShop = getByLocation(signLocation)
         if (existingChestShop != null) {
             // Okay, so it is being updated?
@@ -125,6 +134,7 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
         //if (size == 0) {}
         val chestShop = newChestShop.toChestShop()
         chestShops[signLocation] = chestShop
+        chestShopsByChunk.getOrPut(signLocation.toChunkKey()) { mutableSetOf() }.add(chestShop)
         return chestShop
     }
 
@@ -136,12 +146,24 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
             BetterChestShopEntity.findById(id)?.delete()
         }
         chestShops.remove(chestShop.signLocation)
+        val chunkKey = chestShop.signLocation.toChunkKey()
+        chestShopsByChunk[chunkKey]?.let { shops ->
+            shops.remove(chestShop)
+            if (shops.isEmpty()) chestShopsByChunk.remove(chunkKey)
+        }
     }
 
     suspend fun removeChestShops(chestShops: Collection<ChestShop>): AtomicInteger {
         val count = AtomicInteger()
         newSuspendedTransaction(databaseDispatcher) {
-            chestShops.forEach { BetterChestShopEntity.findById(it.id)?.delete(); if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet() }
+            chestShops.forEach {
+                BetterChestShopEntity.findById(it.id)?.delete()
+                if (this@ChestShopsHandler.chestShops.remove(it.signLocation, it)) count.incrementAndGet()
+                chestShopsByChunk[it.chunkKey]?.let { shops ->
+                    shops.remove(it)
+                    if (shops.isEmpty()) chestShopsByChunk.remove(it.chunkKey)
+                }
+            }
         }
         return count
     }
@@ -154,16 +176,14 @@ class ChestShopsHandler(private val plugin: BetterChestShopsPlugin) {
 
     fun getChestShopsUnordered() = chestShops.values.toSet()
 
-    fun getChunkWithChestShops() = chestShops.entries.groupBy({ it.key.chunk }, { it.value })
-
     /**
      * Get the chest shops by the give chunk.
-     * Checks if the world and chunk is loaded and if the chuck matches the given chunk
+     * Checks if the world and chunk are loaded and if the chuck matches the given chunk
      *
      * @param chunk The chunk you want to get the chest shops from.
      * @return A set with all the chest shops in the given chunk.
      */
-    fun getChestShopsByChunk(chunk: Chunk) = chestShops.values.filter { it.signLocation.isWorldLoaded && it.signLocation.isChunkLoaded && it.signLocation.chunk == chunk }
+    fun getChestShopsByChunk(chunk: Chunk) = chestShopsByChunk[chunk.toChunkKey()].orEmpty()
 
     fun getChestShops(predicate: (ChestShop) -> Boolean) = chestShops.values.filter(predicate)
 }

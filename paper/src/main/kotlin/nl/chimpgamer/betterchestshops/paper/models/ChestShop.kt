@@ -5,6 +5,7 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign
 import com.Acrobot.ChestShop.Utils.uBlock
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.extensions.capitalizeWords
+import nl.chimpgamer.betterchestshops.paper.extensions.toChunkKey
 import nl.chimpgamer.betterchestshops.paper.utils.Utils
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -28,16 +29,15 @@ class ChestShop(
     val created: LocalDateTime
 ) {
     val isChunkLoaded: Boolean get() = signLocation.isChunkLoaded
+    val chunkKey: ChunkKey = signLocation.toChunkKey()
 
     val isValid: Boolean get() = ChestShopSign.isValid(signLocation.block)
 
     val container: Container?
         get() {
             val signBlockState = signLocation.block.state
-            if (signBlockState is Sign) {
-                if (ChestShopSign.isValid(signBlockState)) {
-                    return uBlock.findConnectedContainer(signBlockState)
-                }
+            if (signBlockState is Sign && ChestShopSign.isValid(signBlockState)) {
+                return uBlock.findConnectedContainer(signBlockState)
             }
             return null
         }

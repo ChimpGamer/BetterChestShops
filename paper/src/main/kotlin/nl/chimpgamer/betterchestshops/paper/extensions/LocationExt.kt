@@ -1,5 +1,7 @@
 package nl.chimpgamer.betterchestshops.paper.extensions
 
+import nl.chimpgamer.betterchestshops.paper.models.ChunkKey
+import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Tag
 import org.bukkit.block.BlockFace
@@ -23,3 +25,9 @@ fun Location.isSafe(): Boolean {
         return false
     }
 }
+
+fun Location.toChunkKey(): ChunkKey {
+    return ChunkKey(world.uid, blockX shr 4, blockZ shr 4)
+}
+
+fun Chunk.toChunkKey(): ChunkKey = ChunkKey(world.uid, x, z)
