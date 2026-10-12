@@ -5,7 +5,7 @@ paper-api = "1.21.11-R0.1-SNAPSHOT"
 
 # Others
 exposed = "1.5.1"
-mariadb = "3.5.2"
+mariadb = "3.5.6"
 boostedYaml = "1.3.7"
 hikariCP = "7.0.2"
 sqlite = "3.53.2.1"
