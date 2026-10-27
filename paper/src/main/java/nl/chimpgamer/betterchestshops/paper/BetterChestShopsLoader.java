@@ -15,7 +15,7 @@ public class BetterChestShopsLoader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
         var dependencies = new ArrayList<String>() {{
-            add("org.jetbrains.kotlin:kotlin-stdlib:2.4.20");
+            add("org.jetbrains.kotlin:kotlin-stdlib:2.4.21");
             add("org.jetbrains.exposed:exposed-core:1.5.1");
             add("org.jetbrains.exposed:exposed-dao:1.5.1");
             add("org.jetbrains.exposed:exposed-jdbc:1.5.1");
