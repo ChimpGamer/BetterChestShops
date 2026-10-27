@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.betterchestshops"
-    version = "1.0.1"
+    version = "1.0.2-SNAPSHOT"
 
     repositories {
         mavenCentral()
