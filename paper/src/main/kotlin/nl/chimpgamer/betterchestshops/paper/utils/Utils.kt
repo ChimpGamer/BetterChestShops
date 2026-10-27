@@ -8,6 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 object Utils {
@@ -40,6 +41,12 @@ object Utils {
         decimalFormat.maximumFractionDigits = 2
         decimalFormat.isGroupingUsed = false
         return decimalFormat.format(price)
+    }
+
+    fun getAvgPrice(prices: List<BigDecimal>): BigDecimal? {
+        return prices.takeIf { it.isNotEmpty() }
+            ?.reduce(BigDecimal::add)
+            ?.divide(BigDecimal(prices.size), 2, RoundingMode.HALF_UP)
     }
 
     fun createChatInputBuilderBase(

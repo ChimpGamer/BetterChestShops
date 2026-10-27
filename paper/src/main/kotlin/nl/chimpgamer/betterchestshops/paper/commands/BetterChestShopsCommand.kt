@@ -9,11 +9,14 @@ import kotlinx.coroutines.withContext
 import nl.chimpgamer.betterchestshops.paper.BetterChestShopsPlugin
 import nl.chimpgamer.betterchestshops.paper.menus.ChestShopsMenu
 import nl.chimpgamer.betterchestshops.paper.models.ChestShopSortBy
+import nl.chimpgamer.betterchestshops.paper.utils.Utils
+import org.bukkit.Material
 import org.bukkit.Tag
 import org.bukkit.block.Sign
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
+import org.incendo.cloud.bukkit.parser.MaterialParser.materialParser
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
 import org.incendo.cloud.parser.flag.CommandFlag
@@ -123,6 +126,48 @@ class BetterChestShopsCommand(private val plugin: BetterChestShopsPlugin) {
                     return@suspendingHandler
                 }
                 sender.sendRichMessage("<green>This chestshop is registered!")
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("check")
+            .literal("price")
+            .required("material", materialParser())
+            .permission("$basePermission.check.price")
+            .handler { context ->
+                val sender = context.sender()
+                val material: Material = context["material"]
+
+                val chestShops = plugin.chestShopsHandler.getChestShops { it.itemStack?.type == material }
+                if (chestShops.isEmpty()) {
+                    sender.sendRichMessage("<red>No chestshops found that buy or sell this material!")
+                    return@handler
+                }
+                val buyPrices = chestShops.mapNotNull { it.buyPrice }
+                val sellPrices = chestShops.mapNotNull { it.sellPrice }
+
+                val lowestBuyPrice = buyPrices.minOrNull()
+                val highestBuyPrice = buyPrices.maxOrNull()
+
+                val avgBuyPrice = Utils.getAvgPrice(buyPrices)
+
+                val lowestSellPrice = sellPrices.minOrNull()
+                val highestSellPrice = sellPrices.maxOrNull()
+
+                val avgSellPrice = Utils.getAvgPrice(sellPrices)
+
+                sender.sendRichMessage(
+                    """
+                        <dark_gray>======== <gold>Checking prices for <blue>$material <dark_gray>========
+                        <gold>Lowest buy price: <green>${Utils.formatPrice(lowestBuyPrice)}
+                        <gold>Highest buy price: <red>${Utils.formatPrice(highestBuyPrice)}
+                        <gold>Average buy price: <yellow>${Utils.formatPrice(avgBuyPrice)}
+                        <gold>Lowest sell price: <green>${Utils.formatPrice(lowestSellPrice)}
+                        <gold>Highest sell price: <red>${Utils.formatPrice(highestSellPrice)}
+                        <gold>Average sell price: <yellow>${Utils.formatPrice(avgSellPrice)}
+                    """.trimIndent()
+                )
             }
         )
     }
